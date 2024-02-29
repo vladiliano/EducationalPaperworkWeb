@@ -1,8 +1,8 @@
-using EducationalPaperworkWeb.Models;
+using EducationalPaperworkWeb.Features.Error;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace EducationalPaperworkWeb.Controllers
+namespace EducationalPaperworkWeb.Views.Home
 {
     public class HomeController : Controller
     {

@@ -1,4 +1,4 @@
-namespace EducationalPaperworkWeb.Models
+namespace EducationalPaperworkWeb.Features.Error
 {
     public class ErrorViewModel
     {

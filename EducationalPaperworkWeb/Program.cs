@@ -1,3 +1,6 @@
+using EducationalPaperworkWeb.Infrastructure.Infrastructure.Conventions;
+using EducationalPaperworkWeb.Infrastructure.Infrastructure.ViewEngines;
+
 namespace EducationalPaperworkWeb
 {
     public class Program
@@ -6,16 +9,14 @@ namespace EducationalPaperworkWeb
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
+            ConfigureServices(builder.Services);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -31,6 +32,23 @@ namespace EducationalPaperworkWeb
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        public static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc(o => o.Conventions.Add(new FeatureConvention()))
+                  .AddRazorOptions(options =>
+                  {
+                      // {0} - Action Name
+                      // {1} - Controller Name
+                      // {2} - Feature Name
+                      // Replace normal view location entirely
+                      options.ViewLocationFormats.Clear();
+                      options.ViewLocationFormats.Add("/Features/{2}/{1}/{0}.cshtml");
+                      options.ViewLocationFormats.Add("/Features/{2}/{0}.cshtml");
+                      options.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
+                      options.ViewLocationExpanders.Add(new FeatureFoldersRazorViewEngine());
+                  });
         }
     }
 }

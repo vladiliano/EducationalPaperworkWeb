@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EducationalPaperworkWeb.Infrastructure\EducationalPaperworkWeb.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
