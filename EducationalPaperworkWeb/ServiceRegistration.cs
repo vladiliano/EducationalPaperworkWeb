@@ -1,4 +1,5 @@
 ﻿using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb
 {
@@ -6,7 +7,15 @@ namespace EducationalPaperworkWeb
     {
         public static void RegisterApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
+
+        }
+
+        public static void RegisterDataBase(this IServiceCollection services, string connectionString)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString);
+            });
         }
     }
 }

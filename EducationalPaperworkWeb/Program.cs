@@ -1,5 +1,6 @@
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.Conventions;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.ViewEngines;
+using System;
 
 namespace EducationalPaperworkWeb
 {
@@ -12,6 +13,9 @@ namespace EducationalPaperworkWeb
             builder.Services.AddControllersWithViews();
             builder.Services.RegisterApplicationServices();
             ConfigureServices(builder.Services);
+
+            var connectionString = builder.Configuration.GetConnectionString("MSSQL_ConnectionString");
+            builder.Services.RegisterDataBase(connectionString);
 
             var app = builder.Build();
 

@@ -22,7 +22,7 @@ namespace EducationalPaperworkWeb.Repository.Repositories.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception($"{nameof(Create)}: Помилка на етапі внесення користувача в таблицю.");
+                throw new Exception($"{nameof(Create)}: Помилка на етапі внесення користувача в таблицю.\n{ex.Message}");
             }
         }
 
@@ -35,7 +35,7 @@ namespace EducationalPaperworkWeb.Repository.Repositories.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception($"{nameof(Delete)}: Помилка на етапі видалення користувача з таблиці.");
+                throw new Exception($"{nameof(Delete)}: Помилка на етапі видалення користувача з таблиці.\n{ex.Message}");
             }
         }
 
@@ -50,7 +50,7 @@ namespace EducationalPaperworkWeb.Repository.Repositories.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception($"{nameof(Update)}: Помилка на етапі оновлення користувача в таблиці.");
+                throw new Exception($"{nameof(Update)}: Помилка на етапі оновлення користувача в таблиці.\n{ex.Message}");
             }
         }
 
