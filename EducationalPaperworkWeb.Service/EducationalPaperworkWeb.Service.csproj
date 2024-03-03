@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Service\" />
+    <ProjectReference Include="..\EducationalPaperworkWeb.Repository\EducationalPaperworkWeb.Repository.csproj" />
   </ItemGroup>
 
 </Project>
