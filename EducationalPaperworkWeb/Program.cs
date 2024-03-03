@@ -10,6 +10,7 @@ namespace EducationalPaperworkWeb
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews();
+            builder.Services.RegisterApplicationServices();
             ConfigureServices(builder.Services);
 
             var app = builder.Build();
