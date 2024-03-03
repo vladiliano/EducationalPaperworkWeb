@@ -4,7 +4,7 @@ using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
 
 namespace EducationalPaperworkWeb.Repository.Repositories.Implementations
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : IBaseRepository<User>
     {
         private readonly ApplicationDbContext _db;
 
