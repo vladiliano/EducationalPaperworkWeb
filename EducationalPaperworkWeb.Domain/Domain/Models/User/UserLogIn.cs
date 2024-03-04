@@ -1,4 +1,6 @@
-﻿namespace EducationalPaperworkWeb.Domain.Domain.Models.User
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EducationalPaperworkWeb.Domain.Domain.Models.User
 {
     public class UserLogIn
     {

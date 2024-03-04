@@ -94,3 +94,27 @@
     width: 100%;
     margin-top: 30px;
 }
+
+.password {
+    position: relative;
+    width: 100%;
+}
+
+.password-control {
+    position: absolute;
+    top: 11px;
+    right: 6px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url(../icons/1490793864-user-interface16_82335.png) 0 0 no-repeat !important;
+    background-position: center;
+}
+
+    .password-control.view {
+        background: url(../icons/eye_89413.png) 0 0 no-repeat !important;
+    }
+
+.password input {
+    width: 100%;
+}

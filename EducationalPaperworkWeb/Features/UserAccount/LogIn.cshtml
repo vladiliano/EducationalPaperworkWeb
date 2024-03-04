@@ -1,4 +1,4 @@
-﻿@model EducationalPaperworkWeb.Domain.Domain.Models.User.User
+﻿@model EducationalPaperworkWeb.Domain.Domain.Models.User.UserLogIn
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,11 +13,19 @@
     <div class="login">
         <form>
             <h1>LOG IN</h1>
-            <label asp-for="Email">Email</label>
+
+            <label>Email</label>
             <input asp-for="Email" type="text" />
-            <label asp-for="Password">Password</label>
-            <input asp-for="Password" type="password" />
-            <button asp-action="" type="submit" class="btn btn-primary">SUBMIT</button>
+            <span asp-validation-for="Email" class="text-danger"></span>
+
+            <label>Password</label>
+            <div class="password">
+                <input type="password" id="password-input" name="password">
+                <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+            </div>
+            <span asp-validation-for="Password" class="text-danger"></span>
+
+            <button asp-action="LogIn" class="btn btn-primary" type="submit">SUBMIT</button>
 
             <div class="link-container">
                 <a asp-action="Registration" class="link-text">Sign up</a>
@@ -28,3 +36,17 @@
 
 </body>
 </html>
+
+<script>
+    function show_hide_password(target) {
+        var input = document.getElementById('password-input');
+        if (input.getAttribute('type') == 'password') {
+            target.classList.add('view');
+            input.setAttribute('type', 'text');
+        } else {
+            target.classList.remove('view');
+            input.setAttribute('type', 'password');
+        }
+        return false;
+    }
+</script>
