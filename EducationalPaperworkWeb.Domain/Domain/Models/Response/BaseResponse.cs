@@ -5,14 +5,14 @@ namespace EducationalPaperworkWeb.Domain.Domain.Models.Response
     public class BaseResponse<T> : IBaseResponse<T>
     {
         public string Description { get; set; }
-        public StatusCode StatusCode { get; set; }
+        public OperationStatusCode StatusCode { get; set; }
         public T Data { get; set; }
     }
 
     public interface IBaseResponse<T>
     {
         string Description { get; }
-        StatusCode StatusCode { get; }
+        OperationStatusCode StatusCode { get; }
         T Data { get; }
     }
 }

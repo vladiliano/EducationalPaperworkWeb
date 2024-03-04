@@ -31,7 +31,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 {
                     return new BaseResponse<bool>()
                     {
-                        StatusCode = StatusCode.NotFound,
+                        StatusCode = OperationStatusCode.NotFound,
                         Description = "Користувача з такою поштою не знайдено!",
                         Data = false
                     };
@@ -41,7 +41,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 {
                     return new BaseResponse<bool>()
                     {
-                        StatusCode = StatusCode.BadRequest,
+                        StatusCode = OperationStatusCode.BadRequest,
                         Description = "Паролі не співпадають!",
                         Data = false
                     };
@@ -53,7 +53,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<bool>()
                 {
                     Description = "Пароль успішно змінено!",
-                    StatusCode = StatusCode.OK,
+                    StatusCode = OperationStatusCode.OK,
                     Data = true
                 };
             }
@@ -62,7 +62,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<bool>()
                 {
                     Description = ex.Message,
-                    StatusCode = StatusCode.InternalServerError,
+                    StatusCode = OperationStatusCode.InternalServerError,
                     Data = false
                 };
             }
@@ -81,7 +81,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     return new BaseResponse<ClaimsIdentity>()
                     {
                         Description = "Користувача з такою поштою не знайдено!",
-                        StatusCode = StatusCode.NotFound
+                        StatusCode = OperationStatusCode.NotFound
                     };
                 }
 
@@ -90,7 +90,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     return new BaseResponse<ClaimsIdentity>()
                     {
                         Description = "Невірний пароль!",
-                        StatusCode = StatusCode.Unauthorized,
+                        StatusCode = OperationStatusCode.Unauthorized,
                     };
                 }
 
@@ -99,7 +99,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<ClaimsIdentity>()
                 {
                     Description = "Користувач успішно увійшов в аккаунт!",
-                    StatusCode = StatusCode.OK,
+                    StatusCode = OperationStatusCode.OK,
                     Data = result
                 };
             }
@@ -108,7 +108,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<ClaimsIdentity>()
                 {
                     Description = ex.Message,
-                    StatusCode = StatusCode.InternalServerError
+                    StatusCode = OperationStatusCode.InternalServerError
                 };
             }
         }
@@ -126,7 +126,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     return new BaseResponse<User>()
                     {
                         Description = "Користувач з такою поштою вже існує!",
-                        StatusCode = StatusCode.Conflict,
+                        StatusCode = OperationStatusCode.Conflict,
                         Data = user
                     };
                 }
@@ -138,7 +138,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<User>()
                 {
                     Description = "Користувача успішно зареєстровано!",
-                    StatusCode = StatusCode.Created,
+                    StatusCode = OperationStatusCode.Created,
                     Data = user
                 };
             }
@@ -147,7 +147,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<User>()
                 {
                     Description = ex.Message,
-                    StatusCode = StatusCode.InternalServerError
+                    StatusCode = OperationStatusCode.InternalServerError
                 };
             }
         }

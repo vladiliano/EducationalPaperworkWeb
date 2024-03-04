@@ -1,8 +1,6 @@
-﻿using static System.Net.WebRequestMethods;
-
-namespace EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums
+﻿namespace EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums
 {
-    public enum StatusCode
+    public enum OperationStatusCode
     {
         OK = 200,
         Created = 201,

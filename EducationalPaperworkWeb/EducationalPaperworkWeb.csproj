@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EducationalPaperworkWeb.Infrastructure\EducationalPaperworkWeb.Infrastructure.csproj" />
+    <ProjectReference Include="..\EducationalPaperworkWeb.Service\EducationalPaperworkWeb.Service.csproj" />
   </ItemGroup>
 
 </Project>
