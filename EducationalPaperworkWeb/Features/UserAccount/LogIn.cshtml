@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизація</title>
+    <title>Log In</title>
     <link rel="stylesheet" href="~/css/logRegStyles.css">
 </head>
 <body>
 
     <div class="login">
-        <form>
+        <form asp-action="post">
             <h1>LOG IN</h1>
 
             <label>Email</label>
@@ -22,8 +22,8 @@
             <div class="password">
                 <input type="password" id="password-input" name="password">
                 <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <span asp-validation-for="Password" class="text-danger"></span>
 
             <button asp-action="LogIn" class="btn btn-primary" type="submit">SUBMIT</button>
 
