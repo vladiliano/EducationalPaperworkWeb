@@ -1,4 +1,6 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Enums;
+﻿using EducationalPaperworkWeb.Domain.Domain.CustomAtributes;
+using EducationalPaperworkWeb.Domain.Domain.Enums;
+using EducationalPaperworkWeb.Domain.Domain.CustomAtributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace EducationalPaperworkWeb.Domain.Domain.Models.User
@@ -21,13 +23,12 @@ namespace EducationalPaperworkWeb.Domain.Domain.Models.User
         [MaxLength(25, ErrorMessage = "Максимальна довжина поля 25 літер!")]
         [RegularExpression("^[a-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
         public string Patronymic { get; set; }
-        [Required(ErrorMessage = "Пусте поле!")]
+        [Required(ErrorMessage = "Поле не может быть null")]
+        [DateOfBirthValidationAttribute(1950, ErrorMessage = "Дата народження не обрана!")]
         public DateTime DateOfBirth { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
         public Faculty Faculty { get; set; }
-        [Required(ErrorMessage = "Пусте поле!")]
-        [MinLength(2, ErrorMessage = "Мінімальна довжина поля 2 літери!")]
-        [MaxLength(10, ErrorMessage = "Максимальна довжина поля 10 літер!")]
+        [Required(ErrorMessage = "Оберіть факультет!")]
         [RegularExpression("^[a-zA-Z0-9-]+$", ErrorMessage = "Поле має містити тільки літери і цифри!")]
         public string Group { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]

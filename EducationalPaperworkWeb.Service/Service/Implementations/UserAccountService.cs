@@ -19,7 +19,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             _repository = repository;
         }
 
-        public async Task<IBaseResponse<bool>> ChangePassword(UserChangePassword user)
+        public async Task<IBaseResponse<bool>> ChangePassword(UserRestorePassword user)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<ClaimsIdentity>> LogIn(UserLogIn user)
+        public async Task<IBaseResponse<ClaimsIdentity>> SignIn(UserSignIn user)
         {
             try
             {

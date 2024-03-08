@@ -1,0 +1,43 @@
+﻿@model EducationalPaperworkWeb.Domain.Domain.Models.User.UserSignIn
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизація</title>
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <script src="~/js//index.js"></script>
+</head>
+<body>
+
+    <div class="login">
+        <form method="post">
+            <h1>SIGN IN</h1>
+
+            <label>Email</label>
+            <div class="input-container">
+                <input asp-for="Email" type="text" />
+                <span asp-validation-for="Email" class="text-danger validation-message"></span>
+            </div>
+
+            <label>Password</label>
+            <div class="input-container">
+                <div class="password">
+                    <input type="password" id="password-input" name="password">
+                    <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                </div>
+                <span asp-validation-for="Password" class="text-danger validation-message"></span>
+            </div>
+
+            <button asp-action="SignIn" class="btn btn-primary" type="submit">SUBMIT</button>
+
+            <div class="link-container">
+                <a asp-action="SignUp" class="link-text">Sign up</a>
+                <a asp-action="RestorePassword" class="link-text">Restore password</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

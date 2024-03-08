@@ -1,0 +1,105 @@
+﻿@using EducationalPaperworkWeb.Domain.Domain.Enums
+@model EducationalPaperworkWeb.Domain.Domain.Models.User.UserSignUp
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реєстрація</title>
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <script src="~/js/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="login registration-form">
+        <form method="post">
+
+            <h1>SIGN UP</h1>
+
+            <div class="registration-columns">
+                <div class="registration-column">
+                    <!-- Левая часть формы -->
+                    <div class="registration-input-container">
+                        <label>Name</label>
+                        <input asp-for="Name" />
+                        <span asp-validation-for="Name" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container">
+                        <label>Surname</label>
+                        <input asp-for="Surname" />
+                        <span asp-validation-for="Surname" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container">
+                        <label>Patronymic</label>
+                        <input asp-for="Patronymic" />
+                        <span asp-validation-for="Patronymic" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container">
+                        <label>Date of Birth</label>
+                        <input asp-for="DateOfBirth" type="date" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container">
+                        <label>Faculty</label>
+                        <select asp-for="Faculty" class="custom-select" asp-items="Html.GetEnumSelectList<Faculty>()">
+                            <option>@Faculty.Інший</option>
+                        </select>
+                        <span asp-validation-for="Faculty" class="text-danger custom-validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="registration-column">
+                    <!-- Правая часть формы -->
+                    <div class="registration-input-container">
+                        <label>Group</label>
+                        <input asp-for="Group" />
+                        <span asp-validation-for="Group" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container">
+                        <label>Email</label>
+                        <input asp-for="Email" />
+                        <span asp-validation-for="Email" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container">
+                        <label>Phone</label>
+                        <input asp-for="Phone" />
+                        <span asp-validation-for="Phone" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container password">
+                        <label>Password</label>
+                        <input type="password" id="password-input" name="password">
+                        <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                        <span asp-validation-for="Password" class="text-danger custom-validation-message"></span>
+                    </div>
+
+                    <div class="registration-input-container password">
+                        <label>Repeat Password</label>
+                        <input type="password" id="repeat-password-input" name="repeat-password">
+                        <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                        <span asp-validation-for="RepeatPassword" class="text-danger custom-validation-message"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button asp-action="SignUp" class="btn btn-primary" type="submit">SUBMIT</button>
+
+            <div class="link-container">
+                <a asp-action="SignIn" class="link-text">Sign in</a>
+                <a asp-action="RestorePassword" class="link-text">Recover password</a>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,135 +1,136 @@
-(function($){
-    $.fn.extend({
-        donetyping: function(callback,timeout){
-            timeout = timeout || 500;
-            var timeoutReference,
-                doneTyping = function(el){
-                    if (!timeoutReference) return;
-                    timeoutReference = null;
-                    callback.call(el);
-                };
-            return this.each(function(i,el){
-                var $el = $(el);
-                $el.is(':input') && $el.on('keyup keypress',function(e){
-                    if (e.type=='keyup' && e.keyCode!=8) return;
-                    if (timeoutReference) clearTimeout(timeoutReference);
-                    timeoutReference = setTimeout(function(){
-                        doneTyping(el);
-                    }, timeout);
-                }).on('blur',function(){
-                    doneTyping(el);
-                });
-            });
-        }
+$(function () {
+    $(".btn").click(function () {
+        $(".form-signin").toggleClass("form-signin-left");
+        $(".form-signup").toggleClass("form-signup-left");
+        $(".frame").toggleClass("frame-long");
+        $(".signup-inactive").toggleClass("signup-active");
+        $(".signin-active").toggleClass("signin-inactive");
+        $(".forgot").toggleClass("forgot-left");
+        $(this).removeClass("idle").addClass("active");
     });
-})(jQuery);
+});
 
-formValidation = {
-	init: function(){
-		this.$form = $('.registration-form');
-		this.$firstName = this.$form.find('input[name="firstName"]');
-		this.$lastName = this.$form.find('input[name="lastName"]');
-		this.$email = this.$form.find('input[name="email"]');
-		this.$password = this.$form.find('input[name="password"]');
-		this.$passwordToggle = this.$form.find('button.toggle-visibility');
-		this.$submitButton = this.$form.find('button.submit');
-		
-		this.validatedFields = {
-			firstName: false,
-			lastName: false,
-			email: false,
-			password: false
-		};
-		
-		this.bindEvents();
-	},
-	bindEvents: function(){
-		this.$firstName.donetyping(this.validateFirstNameHandler.bind(this));
-		this.$lastName.donetyping(this.validateLastNameHandler.bind(this));
-		this.$email.donetyping(this.validateEmailHandler.bind(this));
-		this.$password.donetyping(this.validatePasswordHandler.bind(this));
-		this.$passwordToggle.mousedown(this.togglePasswordVisibilityHandler.bind(this));
-		this.$passwordToggle.click(function(e){e.preventDefault()});
-		this.$form.submit(this.submitFormHandler.bind(this));
-	},
-	validateFirstNameHandler: function(){
-		this.validatedFields.firstName = this.validateText(this.$firstName);
-	},
-	validateLastNameHandler: function(){
-		this.validatedFields.lastName = this.validateText(this.$lastName);
-	},
-	validateEmailHandler: function(){
-		this.validatedFields.email = this.validateText(this.$email) && this.validateEmail(this.$email);
-	},
-	validatePasswordHandler: function(){
-		this.validatedFields.password = this.validateText(this.$password) && this.validatePassword(this.$password);
-	},
-	togglePasswordVisibilityHandler: function(){
-		var html = '<input type="text" value="'+this.$password.val()+'">';
-		var $passwordParent = this.$password.parent()
-		var saved$password = this.$password.detach();
-		$passwordParent.append(html);
-		this.$passwordToggle.find('span').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
-		this.$passwordToggle.one('mouseup mouseleave', (function(){
-			$passwordParent.find('input').remove();
-			$passwordParent.append(saved$password);
-			this.$passwordToggle.find('span').removeClass('glyphicon-eye-open').addClass('glyphicon-eye-close');
-		}).bind(this));
-	},
-	submitFormHandler: function(e){
-		e.preventDefault();
-		this.validateFirstNameHandler();
-		this.validateLastNameHandler();
-		this.validateEmailHandler();
-		this.validatePasswordHandler();
-		if(this.validatedFields.firstName && this.validatedFields.lastName && this.validatedFields.email && this.validatedFields.password){
-			// Simulate Ajax loading
-			this.$submitButton.addClass('loading').html('<span class="loading-spinner"></span>')
-			setTimeout((function(){
-				this.$submitButton.removeClass('loading').addClass('success').html('Welcome, '+this.$firstName.val())
-			}).bind(this), 1500);
-		}else{
-			this.$submitButton.text('Please Fix the Errors');
-			setTimeout((function(){
-				if(this.$submitButton.text() == 'Please Fix the Errors'){
-					this.$submitButton.text('Sign Me Up');
-				}
-			}).bind(this), 3000)
-		}
-	},
-	
-	validateText: function($input){
-		$input.parent().removeClass('invalid');
-		$input.parent().find('span.label-text small.error').remove();
-		if($input.val() != ''){
-			return true;
-		}else{
-			$input.parent().addClass('invalid');
-			$input.parent().find('span.label-text').append(' <small class="error">(Field is empty)</small>');
-			return false;
-		}
-	},
-	validateEmail: function($input){
-		var regEx = /\S+@\S+\.\S+/;
-		$input.parent().removeClass('invalid');
-		$input.parent().find('span.label-text small.error').remove();
-    if(regEx.test($input.val())){
-			return true;
-		}else{
-			$input.parent().addClass('invalid');
-			$input.parent().find('span.label-text').append(' <small class="error">(Email is invalid)</small>');
-			return false;
-		}
-	},
-	validatePassword: function($input){
-			$input.parent().removeClass('invalid');
-		$input.parent().find('span.label-text small.error').remove();
-		if($input.val().length >= 8){
-			return true;
-		}else{
-			$input.parent().addClass('invalid');
-			$input.parent().find('span.label-text').append(' <small class="error">(Your password must longer than 7 characters)</small>');
-			return false;
-		}
-	}
-}.init();
+$(function () {
+    $(".btn-signup").click(function () {
+        $(".nav").toggleClass("nav-up");
+        $(".form-signup-left").toggleClass("form-signup-down");
+        $(".success").toggleClass("success-left");
+        $(".frame").toggleClass("frame-short");
+    });
+});
+
+$(function () {
+    $(".btn-signin").click(function () {
+        $(".btn-animate").toggleClass("btn-animate-grow");
+        $(".welcome").toggleClass("welcome-left");
+        $(".cover-photo").toggleClass("cover-photo-down");
+        $(".frame").toggleClass("frame-short");
+        $(".profile-photo").toggleClass("profile-photo-down");
+        $(".btn-goback").toggleClass("btn-goback-up");
+        $(".forgot").toggleClass("forgot-fade");
+    });
+});
+
+function show_hide_password(control) {
+    var passwordInput = control.previousElementSibling;
+    var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+
+    // Change the eye icon based on the password visibility
+    if (type === 'password') {
+        control.style.backgroundImage = "url('../images/open.png')";
+    } else {
+        control.style.backgroundImage = "url('../images/open.png')";
+    }
+
+    return false;
+}
+
+$(document).ready(function () {
+    // Your other scripts (if any)
+
+    // Event listener for the faculty dropdown
+    $('#SelectedFaculty').change(function () {
+        // Add any additional logic you need
+        console.log('Selected Faculty:', $(this).val());
+    });
+});
+
+var x, i, j, l, ll, selElmnt, a, b, c;
+/*look for any elements with the class "custom-select":*/
+x = document.getElementsByClassName("custom-select");
+l = x.length;
+for (i = 0; i < l; i++) {
+    selElmnt = x[i].getElementsByTagName("select")[0];
+    ll = selElmnt.length;
+    /*for each element, create a new DIV that will act as the selected item:*/
+    a = document.createElement("DIV");
+    a.setAttribute("class", "select-selected");
+    a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+    x[i].appendChild(a);
+    /*for each element, create a new DIV that will contain the option list:*/
+    b = document.createElement("DIV");
+    b.setAttribute("class", "select-items select-hide");
+    for (j = 1; j < ll; j++) {
+        /*for each option in the original select element,
+        create a new DIV that will act as an option item:*/
+        c = document.createElement("DIV");
+        c.innerHTML = selElmnt.options[j].innerHTML;
+        c.addEventListener("click", function (e) {
+            /*when an item is clicked, update the original select box,
+            and the selected item:*/
+            var y, i, k, s, h, sl, yl;
+            s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+            sl = s.length;
+            h = this.parentNode.previousSibling;
+            for (i = 0; i < sl; i++) {
+                if (s.options[i].innerHTML == this.innerHTML) {
+                    s.selectedIndex = i;
+                    h.innerHTML = this.innerHTML;
+                    y = this.parentNode.getElementsByClassName("same-as-selected");
+                    yl = y.length;
+                    for (k = 0; k < yl; k++) {
+                        y[k].removeAttribute("class");
+                    }
+                    this.setAttribute("class", "same-as-selected");
+                    break;
+                }
+            }
+            h.click();
+        });
+        b.appendChild(c);
+    }
+    x[i].appendChild(b);
+    a.addEventListener("click", function (e) {
+        /*when the select box is clicked, close any other select boxes,
+        and open/close the current select box:*/
+        e.stopPropagation();
+        closeAllSelect(this);
+        this.nextSibling.classList.toggle("select-hide");
+        this.classList.toggle("select-arrow-active");
+    });
+}
+function closeAllSelect(elmnt) {
+    /*a function that will close all select boxes in the document,
+    except the current select box:*/
+    var x, y, i, xl, yl, arrNo = [];
+    x = document.getElementsByClassName("select-items");
+    y = document.getElementsByClassName("select-selected");
+    xl = x.length;
+    yl = y.length;
+    for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+            arrNo.push(i)
+        } else {
+            y[i].classList.remove("select-arrow-active");
+        }
+    }
+    for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+            x[i].classList.add("select-hide");
+        }
+    }
+}
+/*if the user clicks anywhere outside the select box,
+then close all select boxes:*/
+document.addEventListener("click", closeAllSelect);
