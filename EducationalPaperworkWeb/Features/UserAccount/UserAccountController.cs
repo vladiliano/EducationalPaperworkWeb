@@ -17,22 +17,13 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         }
 
         [HttpGet]
-        public IActionResult SignIn()
-        {
-            return View();
-        }
+        public IActionResult SignIn() => View();
 
         [HttpGet]
-        public IActionResult SignUp()
-        {
-            return View();
-        }
+        public IActionResult SignUp() => View();
 
         [HttpGet]
-        public IActionResult RestorePassword()
-        {
-            return View();
-        }
+        public IActionResult RestorePassword() => View();
 
         [HttpPost]
         public async Task<IActionResult> SignIn(UserSignIn user)
@@ -54,10 +45,10 @@ namespace EducationalPaperworkWeb.Features.UserAccount
             {
                 var result = await _service.Register(user);
 
-                if (result.StatusCode == OperationStatusCode.OK)
+                if (result.StatusCode == OperationStatusCode.Created)
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
-            return View();
+            return View(user);
         }
 
         [HttpPost]

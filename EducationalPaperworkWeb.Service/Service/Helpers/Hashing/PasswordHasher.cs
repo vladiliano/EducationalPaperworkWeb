@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.Helpers.PasswordHashing
+namespace EducationalPaperworkWeb.Service.Service.Helpers.Hashing
 {
     public static class PasswordHasher
     {

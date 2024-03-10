@@ -16,4 +16,8 @@
     <ProjectReference Include="..\EducationalPaperworkWeb.Domain\EducationalPaperworkWeb.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\DataBase\Entities\" />
+  </ItemGroup>
+
 </Project>

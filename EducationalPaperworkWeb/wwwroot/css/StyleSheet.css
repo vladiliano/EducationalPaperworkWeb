@@ -4,45 +4,33 @@
     justify-content: center;
     height: 100vh;
     background: url('../images/khpi.png') no-repeat center center fixed;
-    color: black;
     background-size: cover;
+    color: black;
     margin: 0;
 }
 
+
+/* Стили для блока логина */
 .login {
-    border: 1px solid black;
     width: 400px;
     height: auto;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid black;
     background: rgba(0, 0, 0, 0.80);
     color: white;
     border-radius: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.75);
-    margin: 0 20px; /* Adjust the left and right margin for padding */
-    padding: 20px;
     position: relative;
 }
 
     .login form {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         box-sizing: border-box;
         width: 100%;
         height: 100%;
-        flex-direction: column;
-        display: flex;
-        gap: 10px; /* Increase gap for better readability */
-    }
-
-    .login::before {
-        content: "";
-        background: url('../images/khpi.png') no-repeat center center fixed; /* Set your background image */
-        background-size: cover;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: -1;
-        border-radius: 20px;
     }
 
 .validation-message {
@@ -60,46 +48,47 @@
 .input-container {
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px; /* Adjust this value if needed */
-    position: relative; /* Add this line */
+    margin-bottom: 20px;
+    position: relative;
 }
 
 .input-field {
     position: relative;
 }
 
+/* Стили для заголовка h1 в блоке логина */
 .login h1 {
     font-weight: normal;
     font-size: 24px;
-    text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
-    margin-bottom: 60px;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+    margin-bottom: 40px;
 }
 
+/* Стили для меток в блоке логина */
 .login label {
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     text-transform: uppercase;
     font-size: 10px;
     letter-spacing: 2px;
     padding-left: 10px;
-    margin-bottom: 5px; /* Add this line to provide space between label and input */
+    margin-bottom: 0px;
 }
 
-.login input {
-    background: rgba(255,255,255,0.3);
+/* Стили для ввода в блоке логина */
+.login input,
+.login .password input {
+    background: rgba(255, 255, 255, 0.3);
     height: 40px;
-    line-height: 40px;
+    line-height: 30px;
     border-radius: 20px;
     padding: 0px 20px;
     border: none;
     margin-bottom: 20px;
     color: white;
-}
-
-.login input,
-.login .password input {
     width: 100%;
 }
 
+/* Стили для кнопки в блоке логина */
 .login button {
     background: rgba(39, 69, 107, 0.86);
     filter: brightness(85%);
@@ -107,7 +96,7 @@
     line-height: normal;
     border-radius: 20px;
     border: none;
-    margin-top: 40px;
+    margin-top: 30px;
     margin-bottom: 20px;
     box-shadow: 0px 0px 5px;
     color: white;
@@ -118,7 +107,7 @@
 .link-text {
     text-align: center;
     font-size: 14px;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: unset;
     cursor: pointer;
 }
@@ -134,6 +123,7 @@
     margin-top: 30px;
 }
 
+/* Стили для блока пароля */
 .password {
     position: relative;
     width: 100%;
@@ -158,13 +148,11 @@
     width: 100%;
 }
 
-
+/* Стили для формы регистрации */
 .registration-form {
-    width: 800px;
+    width: 600px;
+    margin: 20px auto;
 }
-
-    .registration-form span {
-    }
 
     .registration-form input {
         height: 30px;
@@ -179,20 +167,18 @@
         margin-bottom: 10px;
     }
 
-    .registration-form .registration-input-container.password {
-        margin-bottom: 5px;
-    }
-
 .registration-columns {
     display: flex;
     justify-content: space-between;
 }
 
 .registration-column {
-    width: 42%; /* Adjust the width as needed, leaving some space for margin */
+    width: 42%;
 }
 
-.login select {
+/* Стили для селекта в блоке логина */
+.login select,
+.login input[type="date"] {
     background: rgba(255, 255, 255, 0.3);
     height: 30px;
     line-height: 30px;
@@ -202,22 +188,9 @@
     margin-bottom: 20px;
     color: white;
     width: 100%;
-    appearance: none;
-    cursor: pointer;
 }
 
-.login input[type="date"] {
-    background: rgba(255, 255, 255, 0.3);
-    height: 30px;
-    line-height: 30px;
-    border-radius: 20px;
-    padding: 0px 20px;
-    border: none;
-    margin-bottom: 25px;
-    color: white;
-    width: 100%;
-}
-
+/* Стили для контейнера ввода в блоке регистрации */
 .registration-input-container {
     position: relative;
 }
@@ -225,7 +198,7 @@
 .custom-validation-message {
     display: block;
     position: absolute;
-    bottom: 0px; /* Регулируйте это значение в зависимости от ваших предпочтений */
+    bottom: 0px;
     left: 0;
     font-size: 10px;
     color: rgba(255, 255, 255, 0.8);
@@ -239,23 +212,26 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+    appearance: none;
 }
 
+/* Стили для выпадающего списка в блоке селекта */
 .select-items {
     position: absolute;
-    background-color: black; /* Изменено на черный цвет */
+    background-color: black;
     top: 100%;
     left: 0;
     right: 0;
     z-index: 99;
 }
 
+/* Стили для опции в блоке селекта в блоке логина */
 .login option {
     background: black;
 }
 
-    /* Styling for password control icon */
-    .password-control {
+/* Стили для контрола пароля в блоке логина */
+.password-control {
     position: absolute;
     right: 10px;
     top: 50%;
@@ -266,7 +242,14 @@
     background: url('../images/open.png') no-repeat center center;
 }
 
-/* Additional styling for password input container */
-.password {
-    position: relative;
+.registration-input-container.password input {
+    height: 30px; /* Set the desired height */
+    line-height: 30px;
+    border-radius: 20px;
+    padding: 0px 20px;
+    border: none;
+    margin-bottom: 20px;
+    color: white;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.3);
 }

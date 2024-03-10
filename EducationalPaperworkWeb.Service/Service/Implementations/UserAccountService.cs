@@ -1,9 +1,9 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.Response;
 using EducationalPaperworkWeb.Domain.Domain.Models.User;
-using EducationalPaperworkWeb.Infrastructure.Infrastructure.Helpers.PasswordHashing;
-using EducationalPaperworkWeb.Repository.Repositories.Implementations;
 using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
+using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
+using EducationalPaperworkWeb.Service.Service.Helpers.Mappers;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -113,7 +113,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<User>> Register(User user)
+        public async Task<IBaseResponse<User>> Register(UserSignUp user)
         {
             try
             {

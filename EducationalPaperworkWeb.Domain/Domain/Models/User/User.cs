@@ -1,6 +1,5 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.CustomAtributes;
-using EducationalPaperworkWeb.Domain.Domain.Enums;
-using EducationalPaperworkWeb.Domain.Domain.CustomAtributes;
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums;
+using EducationalPaperworkWeb.Domain.Domain.Helpers.CustomAtributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace EducationalPaperworkWeb.Domain.Domain.Models.User
@@ -11,28 +10,28 @@ namespace EducationalPaperworkWeb.Domain.Domain.Models.User
         [Required(ErrorMessage = "Пусте поле!")]
         [MinLength(2, ErrorMessage = "Мінімальна довжина поля 2 літери!")]
         [MaxLength(25, ErrorMessage = "Максимальна довжина поля 25 літер!")]
-        [RegularExpression("^[a-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
+        [RegularExpression("^[а-яА-Яa-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
         [MinLength(2, ErrorMessage = "Мінімальна довжина поля 2 літери!")]
         [MaxLength(25, ErrorMessage = "Максимальна довжина поля 25 літер!")]
-        [RegularExpression("^[a-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
+        [RegularExpression("^[а-яА-Яa-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
         public string Surname { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
         [MinLength(2, ErrorMessage = "Мінімальна довжина поля 2 літери!")]
         [MaxLength(25, ErrorMessage = "Максимальна довжина поля 25 літер!")]
-        [RegularExpression("^[a-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
+        [RegularExpression("^[а-яА-Яa-zA-Z-]+$", ErrorMessage = "Поле має містити тільки літери!")]
         public string Patronymic { get; set; }
-        [Required(ErrorMessage = "Поле не может быть null")]
-        [DateOfBirthValidationAttribute(1950, ErrorMessage = "Дата народження не обрана!")]
+        [Required(ErrorMessage = "Дата народження не обрана!")]
         public DateTime DateOfBirth { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
+        [FacultyNotDefault(ErrorMessage = "Оберіть факультет!")]
         public Faculty Faculty { get; set; }
-        [Required(ErrorMessage = "Оберіть факультет!")]
-        [RegularExpression("^[a-zA-Z0-9-]+$", ErrorMessage = "Поле має містити тільки літери і цифри!")]
+        [Required(ErrorMessage = "Пусте поле!")]
+        [RegularExpression(@"^\d{3}-[а-яА-Яa-zA-Z-]$", ErrorMessage = "Поле має містити (3 цифри)-(літера)")]
         public string Group { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
-        [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", ErrorMessage = "Некоректна адреса пошти!")]
+        [RegularExpression(@"[A-Za-zа-яА-Я0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", ErrorMessage = "Некоректна адреса пошти!")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
         [StringLength(10, MinimumLength = 10, ErrorMessage = "Довжина поля має містити 10 цифр!")]
@@ -41,11 +40,9 @@ namespace EducationalPaperworkWeb.Domain.Domain.Models.User
         public Role Role { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
         [MinLength(8, ErrorMessage = "Мінімальна довжина поля 8 символів!")]
-        [MaxLength(50, ErrorMessage = "Максимальна довжина поля 50 символів!")]
-        [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-z\\d!@#$%^&*()_+]{4,}$",
-        ErrorMessage = "Пароль повинен містити мінімум одну літеру в нижньому регістрі (a-z), " +
-            "одну літеру у верхньому регістрі (A-Z), " +
-            "одну цифру (0-9) та один із таких символів (!@#$%^&*()_+)")]
+        [MaxLength(64, ErrorMessage = "Максимальна довжина поля 64 символи!")]
+        [RegularExpression("^(?=.*[a-zа-я])(?=.*[A-ZА-Я])(?=.*\\d)(?=.*[!@#$%^&*()_+])[A-Za-zа-яА-Я\\d!@#$%^&*()_+]{4,}$",
+        ErrorMessage = "Пароль повинен містити (a-z,а-я)(A-Z,А-Я)(0-9)(!@#$%^&*()_+)")]
         public string Password { get; set; }
     }
 }

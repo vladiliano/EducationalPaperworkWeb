@@ -1,6 +1,12 @@
 ﻿@using EducationalPaperworkWeb.Domain.Domain.Enums
 @model EducationalPaperworkWeb.Domain.Domain.Models.User.UserSignUp
 
+@{
+    var currentDate = DateTime.Now;
+    var minDate = currentDate.AddYears(-80);
+    var maxDate = currentDate.AddYears(-15);
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +14,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реєстрація</title>
     <link rel="stylesheet" href="~/css/StyleSheet.css">
-    <script src="~/js/index.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="~/js/show_hide_password.js"></script>
+    <script src="~/js/group-input.js"></script>
 </head>
 <body>
 
@@ -24,32 +29,31 @@
                     <!-- Левая часть формы -->
                     <div class="registration-input-container">
                         <label>Name</label>
-                        <input asp-for="Name" />
+                        <input asp-for="Name" maxlength="25" />
                         <span asp-validation-for="Name" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container">
                         <label>Surname</label>
-                        <input asp-for="Surname" />
+                        <input asp-for="Surname" maxlength="25" />
                         <span asp-validation-for="Surname" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container">
                         <label>Patronymic</label>
-                        <input asp-for="Patronymic" />
+                        <input asp-for="Patronymic" maxlength="25" />
                         <span asp-validation-for="Patronymic" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container">
                         <label>Date of Birth</label>
-                        <input asp-for="DateOfBirth" type="date" />
+                        <input asp-for="DateOfBirth" type="date" min="@minDate.ToString("yyyy-MM-dd")" max="@maxDate.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="DateOfBirth" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container">
                         <label>Faculty</label>
                         <select asp-for="Faculty" class="custom-select" asp-items="Html.GetEnumSelectList<Faculty>()">
-                            <option>@Faculty.Інший</option>
                         </select>
                         <span asp-validation-for="Faculty" class="text-danger custom-validation-message"></span>
                     </div>
@@ -59,35 +63,36 @@
                     <!-- Правая часть формы -->
                     <div class="registration-input-container">
                         <label>Group</label>
-                        <input asp-for="Group" />
+                        <input asp-for="Group" id="groupInput" maxlength="5" />
                         <span asp-validation-for="Group" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container">
                         <label>Email</label>
-                        <input asp-for="Email" />
+                        <input asp-for="Email" maxlength="50" />
                         <span asp-validation-for="Email" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container">
                         <label>Phone</label>
-                        <input asp-for="Phone" />
+                        <input asp-for="Phone" maxlength="10" />
                         <span asp-validation-for="Phone" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container password">
                         <label>Password</label>
-                        <input type="password" id="password-input" name="password">
-                        <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                        <input asp-for=Password type="password" id="PasswordInput" name="Password" maxlength="50">
+                        <a href="#" id="Password" class="password-control" onclick="return show_hide_password('PasswordInput', this);"></a>
                         <span asp-validation-for="Password" class="text-danger custom-validation-message"></span>
                     </div>
 
                     <div class="registration-input-container password">
                         <label>Repeat Password</label>
-                        <input type="password" id="repeat-password-input" name="repeat-password">
-                        <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                        <input asp-for="RepeatPassword" type="password" id="RepeatPasswordInput" name="RepeatPassword" maxlength="50">
+                        <a href="#" id="RepeatPassword" class="password-control" onclick="return show_hide_password('RepeatPasswordInput', this);"></a>
                         <span asp-validation-for="RepeatPassword" class="text-danger custom-validation-message"></span>
                     </div>
+
                 </div>
             </div>
 
@@ -95,7 +100,7 @@
 
             <div class="link-container">
                 <a asp-action="SignIn" class="link-text">Sign in</a>
-                <a asp-action="RestorePassword" class="link-text">Recover password</a>
+                <a asp-action="RestorePassword" class="link-text">Restore password</a>
             </div>
 
         </form>
@@ -103,3 +108,8 @@
 
 </body>
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeGroupInputValidation('groupInput');
+    });
+</script>

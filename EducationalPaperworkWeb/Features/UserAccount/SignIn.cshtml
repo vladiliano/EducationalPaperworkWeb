@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизація</title>
     <link rel="stylesheet" href="~/css/StyleSheet.css">
-    <script src="~/js//index.js"></script>
+    <script src="~/js/show_hide_password.js"></script>
 </head>
 <body>
 
@@ -24,8 +24,8 @@
             <label>Password</label>
             <div class="input-container">
                 <div class="password">
-                    <input type="password" id="password-input" name="password">
-                    <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
+                    <input asp-for="Password" type="Password" id="PasswordInput" name="password">
+                    <a href="#" class="password-control" onclick="return show_hide_password('PasswordInput', this);"></a>
                 </div>
                 <span asp-validation-for="Password" class="text-danger validation-message"></span>
             </div>
