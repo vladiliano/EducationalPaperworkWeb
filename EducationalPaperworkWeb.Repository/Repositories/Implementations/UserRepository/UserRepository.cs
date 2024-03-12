@@ -2,7 +2,7 @@
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
 using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
 
-namespace EducationalPaperworkWeb.Repository.Repositories.Implementations
+namespace EducationalPaperworkWeb.Repository.Repositories.Implementations.UserRepository
 {
     public class UserRepository : IBaseRepository<User>
     {

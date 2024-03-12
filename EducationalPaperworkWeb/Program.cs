@@ -34,7 +34,7 @@ namespace EducationalPaperworkWeb
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=UserAccount}/{action=SignIn}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

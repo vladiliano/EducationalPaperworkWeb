@@ -1,4 +1,5 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Models.User;
+﻿using EducationalPaperworkWeb.Domain.Domain.Models.Chat;
+using EducationalPaperworkWeb.Domain.Domain.Models.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase
@@ -11,5 +12,7 @@ namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Chat> Chats { get; set; }
     }
 }

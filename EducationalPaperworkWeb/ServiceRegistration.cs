@@ -1,6 +1,6 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Models.User;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
-using EducationalPaperworkWeb.Repository.Repositories.Implementations;
+using EducationalPaperworkWeb.Repository.Repositories.Implementations.User;
 using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
 using EducationalPaperworkWeb.Service.Service.Implementations;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
