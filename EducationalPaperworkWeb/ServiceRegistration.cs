@@ -1,7 +1,4 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Models.User;
-using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
-using EducationalPaperworkWeb.Repository.Repositories.Implementations.User;
-using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
+﻿using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
 using EducationalPaperworkWeb.Service.Service.Implementations;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +9,7 @@ namespace EducationalPaperworkWeb
     {
         public static void RegisterApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IBaseRepository<User>, UserRepository>();
+            //services.AddScoped<IBaseRepository<User>, UserRepository>();
             services.AddScoped<IUserAccountService, UserAccountService>();
         }
 

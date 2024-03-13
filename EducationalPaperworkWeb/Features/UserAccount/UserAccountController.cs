@@ -1,5 +1,5 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
-using EducationalPaperworkWeb.Domain.Domain.Models.User;
+using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +43,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if (ModelState.IsValid)
             {
-                var result = await _service.Register(user);
+                var result = await _service.SignUp(user);
 
                 if (result.StatusCode == OperationStatusCode.Created)
                     return RedirectToAction(actionName: "Index", controllerName: "Home");

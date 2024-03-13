@@ -1,4 +1,4 @@
-﻿namespace EducationalPaperworkWeb.Domain.Domain.Models.Chat
+﻿namespace EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities
 {
     public class Chat
     {

@@ -7,17 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\DataBase\Entities\**" />
+    <EmbeddedResource Remove="Infrastructure\DataBase\Entities\**" />
+    <None Remove="Infrastructure\DataBase\Entities\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EducationalPaperworkWeb.Domain\EducationalPaperworkWeb.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\DataBase\Entities\" />
   </ItemGroup>
 
 </Project>

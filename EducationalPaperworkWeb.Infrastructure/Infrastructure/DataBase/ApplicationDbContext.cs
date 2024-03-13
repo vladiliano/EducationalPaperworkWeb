@@ -1,5 +1,5 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Models.Chat;
-using EducationalPaperworkWeb.Domain.Domain.Models.User;
+﻿using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
+using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase
