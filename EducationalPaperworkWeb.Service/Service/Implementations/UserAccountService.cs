@@ -23,7 +23,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(Register)}: user == null");
+                if (user == null) throw new Exception($"{nameof(ChangePassword)}: user == null");
 
                 var existUser = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
@@ -72,7 +72,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(Register)}: user == null");
+                if (user == null) throw new Exception($"{nameof(SignIn)}: user == null");
 
                 var existUser = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
