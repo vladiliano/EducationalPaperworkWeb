@@ -2,6 +2,8 @@
 using EducationalPaperworkWeb.Service.Service.Implementations;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork;
+using EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository;
 
 namespace EducationalPaperworkWeb
 {
@@ -9,7 +11,7 @@ namespace EducationalPaperworkWeb
     {
         public static void RegisterApplicationServices(this IServiceCollection services)
         {
-            //services.AddScoped<IBaseRepository<User>, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserAccountService, UserAccountService>();
         }
 

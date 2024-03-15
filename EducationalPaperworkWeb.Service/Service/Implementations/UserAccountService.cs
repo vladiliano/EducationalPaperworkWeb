@@ -1,9 +1,7 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
-using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
-using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
-using EducationalPaperworkWeb.Repository.UnitOfWork;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork;
 using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +13,9 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
     {
         private readonly IUnitOfWork _repository;
 
-        public UserAccountService(ApplicationDbContext context)
+        public UserAccountService(IUnitOfWork repository)
         {
-            _repository = new UnitOfWork(context);
+            _repository = repository;
         }
 
         public async Task<IBaseResponse<bool>> ChangePassword(UserRestorePassword user)

@@ -1,9 +1,10 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
-using EducationalPaperworkWeb.Repository.GenericRepository;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.GenericRepository;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork;
 
-namespace EducationalPaperworkWeb.Repository.UnitOfWork
+namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {

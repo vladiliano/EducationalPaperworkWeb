@@ -10,4 +10,8 @@
     <ProjectReference Include="..\EducationalPaperworkWeb.Repository\EducationalPaperworkWeb.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Service\Helpers\Mappers\" />
+  </ItemGroup>
+
 </Project>

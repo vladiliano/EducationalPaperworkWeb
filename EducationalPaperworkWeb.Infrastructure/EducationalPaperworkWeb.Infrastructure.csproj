@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EducationalPaperworkWeb.Domain\EducationalPaperworkWeb.Domain.csproj" />
+    <ProjectReference Include="..\EducationalPaperworkWeb.Repository\EducationalPaperworkWeb.Repository.csproj" />
   </ItemGroup>
 
 </Project>

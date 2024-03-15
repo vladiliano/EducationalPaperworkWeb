@@ -1,7 +1,8 @@
 ﻿using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace EducationalPaperworkWeb.Repository.GenericRepository
+namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {

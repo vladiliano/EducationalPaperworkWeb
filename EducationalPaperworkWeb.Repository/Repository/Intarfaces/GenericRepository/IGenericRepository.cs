@@ -1,4 +1,4 @@
-﻿namespace EducationalPaperworkWeb.Repository.GenericRepository
+﻿namespace EducationalPaperworkWeb.Repository.Repository.Intarfaces.GenericRepository
 {
     public interface IGenericRepository<T> where T : class
     {
