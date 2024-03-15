@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EducationalPaperworkWeb.Domain.Domain.Models.UserEntities
+namespace EducationalPaperworkWeb.Domain.Domain.Models.User
 {
     public class UserSignUp : User
     {

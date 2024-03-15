@@ -1,5 +1,5 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
-using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
+using EducationalPaperworkWeb.Domain.Domain.Models.User;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,8 +34,10 @@ namespace EducationalPaperworkWeb.Features.UserAccount
 
                 if(result.StatusCode == OperationStatusCode.OK)
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
+                else
+                    ModelState.AddModelError("Email", result.Description);
             }
-            return View();
+            return View(user);
         }
 
         [HttpPost]
@@ -43,7 +45,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if (ModelState.IsValid)
             {
-                var result = await _service.SignUp(user);
+                var result = await _service.Register(user);
 
                 if (result.StatusCode == OperationStatusCode.Created)
                     return RedirectToAction(actionName: "Index", controllerName: "Home");

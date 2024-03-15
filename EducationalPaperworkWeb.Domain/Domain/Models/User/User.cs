@@ -2,7 +2,7 @@
 using EducationalPaperworkWeb.Domain.Domain.Helpers.CustomAtributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace EducationalPaperworkWeb.Domain.Domain.Models.UserEntities
+namespace EducationalPaperworkWeb.Domain.Domain.Models.User
 {
     public class User
     {

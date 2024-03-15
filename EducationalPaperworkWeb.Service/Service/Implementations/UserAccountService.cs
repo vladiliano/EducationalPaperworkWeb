@@ -1,8 +1,9 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
-using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
-using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
-using EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork;
+using EducationalPaperworkWeb.Domain.Domain.Models.Response;
+using EducationalPaperworkWeb.Domain.Domain.Models.User;
+using EducationalPaperworkWeb.Repository.Repositories.Interfaces;
 using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
+using EducationalPaperworkWeb.Service.Service.Helpers.Mappers;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -11,9 +12,9 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 {
     public class UserAccountService : IUserAccountService
     {
-        private readonly IUnitOfWork _repository;
+        private readonly IBaseRepository<User> _repository;
 
-        public UserAccountService(IUnitOfWork repository)
+        public UserAccountService(IBaseRepository<User> repository)
         {
             _repository = repository;
         }
@@ -22,9 +23,9 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignUp)}: user == null");
+                if (user == null) throw new Exception($"{nameof(Register)}: user == null");
 
-                var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
+                var existUser = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
                 if (existUser == null)
                 {
@@ -47,7 +48,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 }
 
                 existUser.Password = PasswordHasher.HashPassowrd(user.Password);
-                await _repository.UserRepository.Update(existUser);
+                await _repository.Update(existUser);
 
                 return new BaseResponse<bool>()
                 {
@@ -71,15 +72,15 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignUp)}: user == null");
+                if (user == null) throw new Exception($"{nameof(Register)}: user == null");
 
-                var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
+                var existUser = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
                 if (existUser == null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
-                        Description = "Користувача з такою поштою не знайдено!",
+                        Description = "Користувача з такою поштою не існує!",
                         StatusCode = OperationStatusCode.NotFound
                     };
                 }
@@ -112,13 +113,13 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<User>> SignUp(UserSignUp user)
+        public async Task<IBaseResponse<User>> Register(UserSignUp user)
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignUp)}: user == null");
+                if (user == null) throw new Exception($"{nameof(Register)}: user == null");
 
-                var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
+                var existUser = await _repository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
                 if (existUser != null)
                 {
@@ -132,7 +133,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 
                 user.Password = PasswordHasher.HashPassowrd(user.Password);
 
-                await _repository.UserRepository.Create(user);
+                await _repository.Create(user);
 
                 return new BaseResponse<User>()
                 {
