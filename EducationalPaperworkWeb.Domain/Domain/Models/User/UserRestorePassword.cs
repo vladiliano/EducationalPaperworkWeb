@@ -1,4 +1,4 @@
-﻿namespace EducationalPaperworkWeb.Domain.Domain.Models.UserEntities
+﻿namespace EducationalPaperworkWeb.Domain.Domain.Models.User
 {
     public class UserRestorePassword : UserSignIn
     {

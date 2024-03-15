@@ -1,6 +1,6 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 
-namespace EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities
+namespace EducationalPaperworkWeb.Domain.Domain.Models.Response
 {
     public class BaseResponse<T> : IBaseResponse<T>
     {
