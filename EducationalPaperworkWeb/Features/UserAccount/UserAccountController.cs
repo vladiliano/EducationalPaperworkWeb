@@ -32,8 +32,17 @@ namespace EducationalPaperworkWeb.Features.UserAccount
             {
                 var result = await _service.SignIn(user);
 
-                if(result.StatusCode == OperationStatusCode.OK)
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                switch (result.StatusCode)
+                {
+                    case OperationStatusCode.NotFound:
+                        ModelState.AddModelError(nameof(user.Email), result.Description);
+                        break;
+                    case OperationStatusCode.Unauthorized:
+                        ModelState.AddModelError(nameof(user.Password), result.Description);
+                        break;
+                    default:
+                        return RedirectToAction(actionName: "Index", controllerName: "Home");
+                }
             }
             return View();
         }
@@ -45,8 +54,14 @@ namespace EducationalPaperworkWeb.Features.UserAccount
             {
                 var result = await _service.SignUp(user);
 
-                if (result.StatusCode == OperationStatusCode.Created)
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                switch (result.StatusCode)
+                {
+                    case OperationStatusCode.Conflict:
+                        ModelState.AddModelError(nameof(user.Email), result.Description);
+                        break;
+                    default:
+                        return RedirectToAction(actionName: "Index", controllerName: "Home");
+                }
             }
             return View(user);
         }

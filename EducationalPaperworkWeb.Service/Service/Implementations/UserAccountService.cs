@@ -22,7 +22,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignUp)}: user == null");
+                if (user == null) throw new Exception($"{nameof(ChangePassword)}: user == null");
 
                 var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
@@ -71,7 +71,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignUp)}: user == null");
+                if (user == null) throw new Exception($"{nameof(SignIn)}: user == null");
 
                 var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
@@ -79,7 +79,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
-                        Description = "Користувача з такою поштою не знайдено!",
+                        Description = "Користувача з такою поштою не існує!",
                         StatusCode = OperationStatusCode.NotFound
                     };
                 }
