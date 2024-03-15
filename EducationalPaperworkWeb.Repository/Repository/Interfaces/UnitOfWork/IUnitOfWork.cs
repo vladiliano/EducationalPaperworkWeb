@@ -1,8 +1,8 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
-using EducationalPaperworkWeb.Repository.Repository.Intarfaces.GenericRepository;
+using EducationalPaperworkWeb.Repository.Repository.Interfaces.GenericRepository;
 
-namespace EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork
+namespace EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -9,11 +9,13 @@ namespace EducationalPaperworkWeb.Features.UserAccount
     {
         private readonly ILogger<UserAccountController> _logger;
         private readonly IUserAccountService _service;
+        private readonly IChatService _chatService;
 
-        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService)
+        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService, IChatService chatService)
         {
             _logger = logger;
             _service = userAccountService;
+            _chatService = chatService;
         }
 
         [HttpGet]
@@ -30,7 +32,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if(ModelState.IsValid)
             {
-                var result = await _service.SignIn(user);
+                var result = await _service.SignInAsync(user);
 
                 switch (result.StatusCode)
                 {
@@ -52,7 +54,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if (ModelState.IsValid)
             {
-                var result = await _service.SignUp(user);
+                var result = await _service.SignUpAsync(user);
 
                 switch (result.StatusCode)
                 {
@@ -71,7 +73,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if (ModelState.IsValid)
             {
-                var result = await _service.ChangePassword(user);
+                var result = await _service.ChangePasswordAsync(user);
 
                 if (result.StatusCode == OperationStatusCode.OK)
                     return RedirectToAction(actionName: "Index", controllerName: "Home");

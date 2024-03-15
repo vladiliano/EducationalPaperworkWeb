@@ -1,5 +1,5 @@
 ﻿using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataBase;
-using EducationalPaperworkWeb.Repository.Repository.Intarfaces.GenericRepository;
+using EducationalPaperworkWeb.Repository.Repository.Interfaces.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository
@@ -15,13 +15,13 @@ namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository
             _dbSet = context.Set<T>();
         }
 
-        public async Task Create(T entity)
+        public async Task CreateAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
@@ -36,7 +36,7 @@ namespace EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository
             return _dbSet.AsQueryable();
         }
 
-        public async Task Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
