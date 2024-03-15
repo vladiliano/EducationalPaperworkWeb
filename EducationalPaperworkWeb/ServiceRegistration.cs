@@ -2,7 +2,7 @@
 using EducationalPaperworkWeb.Service.Service.Implementations;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository;
 
 namespace EducationalPaperworkWeb
@@ -13,7 +13,6 @@ namespace EducationalPaperworkWeb
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserAccountService, UserAccountService>();
-            services.AddScoped<IChatService, ChatService>();
         }
 
         public static void RegisterDataBase(this IServiceCollection services, string connectionString)

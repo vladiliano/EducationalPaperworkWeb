@@ -5,6 +5,5 @@
         public long Id { get; set; }
         public long StudentId { get; set; }
         public long AdminId { get; set; }
-        public DateTime TimeStamp { get; set; }
     }
 }

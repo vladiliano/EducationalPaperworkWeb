@@ -1,8 +1,7 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
-using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
-using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
+using EducationalPaperworkWeb.Repository.Repository.Intarfaces.UnitOfWork;
 using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +18,12 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             _repository = repository;
         }
 
-        public async Task<IBaseResponse<bool>> ChangePasswordAsync(UserRestorePassword user)
+        public async Task<IBaseResponse<bool>> ChangePassword(UserRestorePassword user)
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(ChangePasswordAsync)}: {nameof(user)} == {user}");
+                if (user == null) throw new Exception($"{nameof(ChangePassword)}: user == null");
+
                 var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
                 if (existUser == null)
@@ -47,7 +47,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 }
 
                 existUser.Password = PasswordHasher.HashPassowrd(user.Password);
-                await _repository.UserRepository.UpdateAsync(existUser);
+                await _repository.UserRepository.Update(existUser);
 
                 return new BaseResponse<bool>()
                 {
@@ -67,11 +67,11 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<ClaimsIdentity>> SignInAsync(UserSignIn user)
+        public async Task<IBaseResponse<ClaimsIdentity>> SignIn(UserSignIn user)
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignInAsync)}: {nameof(user)} == {user}");
+                if (user == null) throw new Exception($"{nameof(SignIn)}: user == null");
 
                 var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
@@ -112,11 +112,11 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<User>> SignUpAsync(UserSignUp user)
+        public async Task<IBaseResponse<User>> SignUp(UserSignUp user)
         {
             try
             {
-                if (user == null) throw new Exception($"{nameof(SignUpAsync)}: {nameof(user)} == {user}");
+                if (user == null) throw new Exception($"{nameof(SignUp)}: user == null");
 
                 var existUser = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == user.Email);
 
@@ -132,7 +132,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 
                 user.Password = PasswordHasher.HashPassowrd(user.Password);
 
-                await _repository.UserRepository.CreateAsync(user);
+                await _repository.UserRepository.Create(user);
 
                 return new BaseResponse<User>()
                 {
