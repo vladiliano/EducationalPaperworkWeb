@@ -1,7 +1,12 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
-using EducationalPaperworkWeb.Domain.Domain.Models.User;
+﻿using Azure;
+using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
+using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 
 namespace EducationalPaperworkWeb.Features.UserAccount
 {
@@ -9,11 +14,13 @@ namespace EducationalPaperworkWeb.Features.UserAccount
     {
         private readonly ILogger<UserAccountController> _logger;
         private readonly IUserAccountService _service;
+        private readonly IChatService _chatService;
 
-        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService)
+        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService, IChatService chatService)
         {
             _logger = logger;
             _service = userAccountService;
+            _chatService = chatService;
         }
 
         [HttpGet]
@@ -28,9 +35,9 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         [HttpPost]
         public async Task<IActionResult> SignIn(UserSignIn user)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var result = await _service.SignIn(user);
+                var result = await _service.SignInAsync(user);
 
                 switch (result.StatusCode)
                 {
@@ -41,10 +48,13 @@ namespace EducationalPaperworkWeb.Features.UserAccount
                         ModelState.AddModelError(nameof(user.Password), result.Description);
                         break;
                     default:
-                        return RedirectToAction(actionName: "Index", controllerName: "Home");
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                            new ClaimsPrincipal(result.Data));
+
+                        return RedirectToAction("Index", "Home");
                 }
             }
-            return View(user);
+            return View();
         }
 
         [HttpPost]
@@ -52,7 +62,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if (ModelState.IsValid)
             {
-                var result = await _service.Register(user);
+                var result = await _service.SignUpAsync(user);
 
                 switch (result.StatusCode)
                 {
@@ -71,7 +81,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         {
             if (ModelState.IsValid)
             {
-                var result = await _service.ChangePassword(user);
+                var result = await _service.ChangePasswordAsync(user);
 
                 if (result.StatusCode == OperationStatusCode.OK)
                     return RedirectToAction(actionName: "Index", controllerName: "Home");

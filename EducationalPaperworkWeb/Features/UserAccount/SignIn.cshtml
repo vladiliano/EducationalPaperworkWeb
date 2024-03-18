@@ -1,4 +1,4 @@
-﻿@model EducationalPaperworkWeb.Domain.Domain.Models.User.UserSignIn
+﻿@model EducationalPaperworkWeb.Domain.Domain.Models.UserEntities.UserSignIn
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизація</title>
-    <link rel="stylesheet" href="~/css/reg-log-styles.css">
+    <link rel="stylesheet" href="~/css/reglog.css">
     <script src="~/js/show_hide_password.js"></script>
 </head>
 <body>
 
     <div class="login">
         <form method="post">
-                <h1>SIGN IN</h1>
+            <h1>SIGN IN</h1>
 
             <label>Email</label>
             <div class="input-container">
-                <input asp-for="Email" type="text" />
+                <input asp-for="Email" type="text" value="kitik@gmail.com" />
                 <span asp-validation-for="Email" class="text-danger validation-message"></span>
             </div>
 
             <label>Password</label>
             <div class="input-container">
                 <div class="password">
-                    <input asp-for="Password" type="Password" id="PasswordInput" name="password">
+                    <input asp-for="Password" type="Password" id="PasswordInput" name="password" value="12121212_qW" />
                     <a href="#" class="password-control" onclick="return show_hide_password('PasswordInput', this);"></a>
                 </div>
                 <span asp-validation-for="Password" class="text-danger validation-message"></span>

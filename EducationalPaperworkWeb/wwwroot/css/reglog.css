@@ -60,8 +60,8 @@
     font-weight: normal;
     font-size: 24px;
     text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
-    margin-right: 10px; /* Добавим отступ между заголовком и span */
-    margin-bottom: 0; /* Убираем отступ снизу */
+    margin-right: 10px;
+    margin-bottom: 30px;
 }
 
 

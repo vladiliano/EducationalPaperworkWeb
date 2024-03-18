@@ -7,7 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EducationalPaperworkWeb.Domain\EducationalPaperworkWeb.Domain.csproj" />
     <ProjectReference Include="..\EducationalPaperworkWeb.Repository\EducationalPaperworkWeb.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Service\Helpers\Mappers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
   </ItemGroup>
 
 </Project>
