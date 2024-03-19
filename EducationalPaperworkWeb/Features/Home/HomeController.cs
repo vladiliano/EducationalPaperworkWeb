@@ -1,3 +1,4 @@
+using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
@@ -18,33 +19,38 @@ namespace EducationalPaperworkWeb.Views.Home
             _chatService = service;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var id = HttpContext.User.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
+            if (!HttpContext.User.Identity.IsAuthenticated)
+                return RedirectToAction("SignIn", "UserAccount");
 
-            if (!long.TryParse(id, out long userId))
-                throw new Exception("Failed to parse user id.");
+            if (!long.TryParse(HttpContext.User.FindFirstValue(ClaimsIdentity.DefaultNameClaimType), out long userId))
+                return View("Error");
 
             var chats = await _chatService.GetUserChatsAsync(userId);
+            if (chats == null)
+                return View("Error");
 
-            var userChats = new List<UserChat>(chats.Data.Count);
-
-            foreach (var chat in chats.Data)
+            var userChats = chats.Data.Select(async chat =>
             {
-                var messages = await _chatService.GetChatMessagesAsync(chat.Id);
-                userChats.Add(new UserChat
+                var messagesResponse = await _chatService.GetChatMessagesAsync(chat.Id);
+                return new UserChat
                 {
                     Chat = chat,
-                    Messages = messages.Data
-                });
-            }
+                    Messages = messagesResponse?.Data
+                };
+            });
+
+            var resolvedUserChats = await Task.WhenAll(userChats);
 
             return View(new UserHomePageViewModel
             {
                 Id = userId,
-                UserChats = userChats
+                UserChats = resolvedUserChats.ToList()
             });
         }
+
 
         public IActionResult Privacy()
         {

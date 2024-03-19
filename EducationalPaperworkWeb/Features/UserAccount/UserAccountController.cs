@@ -70,7 +70,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
                         ModelState.AddModelError(nameof(user.Email), result.Description);
                         break;
                     default:
-                        return RedirectToAction(actionName: "Index", controllerName: "Home");
+                        return RedirectToAction(actionName: "SignIn", controllerName: "UserAccount");
                 }
             }
             return View(user);
@@ -84,7 +84,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
                 var result = await _service.ChangePasswordAsync(user);
 
                 if (result.StatusCode == OperationStatusCode.OK)
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                    return RedirectToAction(actionName: "SignIn", controllerName: "UserAccount");
             }
             return View();
         }
