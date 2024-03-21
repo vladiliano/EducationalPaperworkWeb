@@ -1,3 +1,4 @@
+using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
@@ -29,7 +30,7 @@ namespace EducationalPaperworkWeb.Views.Home
                 return View("Error");
 
             var chats = await _chatService.GetUserChatsAsync(userId);
-            if (chats == null)
+            if (chats.StatusCode != OperationStatusCode.OK)
                 return View("Error");
 
             var userChats = chats.Data.Select(async chat =>
@@ -51,6 +52,11 @@ namespace EducationalPaperworkWeb.Views.Home
             });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(string message)
+        {
+            return View();
+		}
 
         public IActionResult Privacy()
         {

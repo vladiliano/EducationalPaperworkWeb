@@ -49,6 +49,38 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
+        public async Task<IBaseResponse<Message>> CreateMessageAsync(Message message)
+        {
+            try
+            {
+                if (message == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(message)} == {message}");
+
+                message.TimeStamp = DateTime.Now;
+
+                await _repository.MessageRepository.CreateAsync(message);
+
+                var existingMessage = _repository.MessageRepository.GetAll()
+                    .OrderBy(x => x.TimeStamp).Last();
+
+                if (existingMessage == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(existingMessage)} == {existingMessage}");
+
+                return new BaseResponse<Message>()
+                {
+                    Description = "Повідомлення було успішно завантажено!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = existingMessage
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Message>()
+                {
+                    Description = ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
+                };
+            }
+        }
+
         public async Task<IBaseResponse<List<Message>>> GetChatMessagesAsync(long chatId)
         {
             try
@@ -118,37 +150,5 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 				};
 			}
 		}
-
-        public async Task<IBaseResponse<Message>> CreateMessageAsync(Message message)
-        {
-            try
-            {
-                if (message == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(message)} == {message}");
-
-                //message.TimeStamp = DateTime.Now;
-
-                await _repository.MessageRepository.CreateAsync(message);
-
-                var existingMessage = _repository.MessageRepository.GetAll()
-                    .OrderBy(x => x.TimeStamp).Last();
-
-                if (existingMessage == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(existingMessage)} == {existingMessage}");
-
-                return new BaseResponse<Message>()
-                {
-                    Description = "Повідомлення було успішно завантажено!",
-                    StatusCode = OperationStatusCode.OK,
-                    Data = existingMessage
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<Message>()
-                {
-                    Description = ex.Message,
-                    StatusCode = OperationStatusCode.InternalServerError,
-                };
-            }
-        }
     }
 }
