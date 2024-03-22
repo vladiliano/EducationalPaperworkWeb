@@ -7,7 +7,7 @@
     <title>Chat</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
-    <link rel="stylesheet" href="~/css/user-chat-stylez.css" />
+    <link rel="stylesheet" href="~/css/home-chat.css" />
     <script src="~/js/home.js"></script>
     <style>
         .col-left {
@@ -26,10 +26,12 @@
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
                     <button class="create_chat_btn">Створити звернення</button>
                     <div class="card-body contacts_body">
-                        @foreach (var chat in Model.UserChats)
-                        {
-                            <button class="chat_btn">@chat.Chat.Name</button>
-                        }
+                        <form asp-controller="Home" method="post">
+                            @foreach (var chat in Model.UserChats)
+                            {
+                                <button asp-action="LoadChat" name="chatId" value="@chat.Chat.Id" class="chat_btn">@chat.Chat.Name</button>
+                            }
+                        </form>
                     </div>
                     <div class="card-footer"></div>
                 </div>
@@ -63,27 +65,36 @@
                         && message.TimeStamp.Month == DateTime.Now.Month
                         && message.TimeStamp.Day == DateTime.Now.Day - 1) time = "Вчора о ";
                         else time = message.TimeStamp.ToString("d MMMM о ", new CultureInfo("uk-UA")); *@
-                            if (chat.Chat.Id == 1)
-                                foreach (var message in chat.Messages)
+                            if (Model.SelectedChatId == chat.Chat.Id)
+                            {
+                                if (chat.Messages != null)
                                 {
-                                    <div class="d-flex @(message.SenderId == Model.Id ? "justify-content-end" : "justify-content-start") mb-4">
-                                        <div class="msg_container">
-                                            @message.Content
-@*                                             <span class="msg_time">@message.TimeStamp.ToString("HH:mm")</span> *@
+                                    foreach (var message in chat.Messages)
+                                    {
+                                        <div class="d-flex @(message.SenderId == Model.Id ? "justify-content-end" : "justify-content-start") mb-4">
+                                            <div class="msg_container">
+                                                @message.Content
+                                                <span class="msg_time">@message.TimeStamp.ToString("HH:mm")</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                 }
+                                else
+                                {
+                                    
+                                }
+                            }
                         }
                     </div>
                     <div class="card-footer">
-                        <form asp-action="SendMessage" asp-controller="Home" method="post">
+                        <form asp-controller="Home" method="post">
                             <div class="input-group">
                                 <div class="input-group-append">
-                                    <button type="submit" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></button>
+                                    <button asp-action="SendFile" type="submit" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></button>
                                 </div>
                                 <textarea name="message" class="form-control type_msg" placeholder="Type your message..."></textarea>
                                 <div class="input-group-append">
-                                    <button type="submit" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+                                    <button asp-action="SendMessage" type="submit" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
                                 </div>
                             </div>
                         </form>

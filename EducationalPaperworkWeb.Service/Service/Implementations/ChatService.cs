@@ -96,6 +96,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     {
                         StatusCode = OperationStatusCode.NotFound,
                         Description = "Повідомлень в чаті не знайдено!",
+                        Data = new List<Message>(0)
                     };
                 }
 

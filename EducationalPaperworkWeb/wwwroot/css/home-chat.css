@@ -38,12 +38,12 @@ html {
     background-color: rgba(0,0,0,0);
 }
 
-.container-fluid{
+.container-fluid {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
 
-.row{
+.row {
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
@@ -101,16 +101,22 @@ html {
     color: white !important;
     border-color: none !important;
 }
+    .attach_btn,
+    .send_btn,
+    .create_chat_btn,
+    .chat_btn{
+        cursor: default !important;
+    }
 
-.create_chat_btn {
-    background-color: rgba(0,0,0,0) !important;
-    border: 0 !important;
-    color: white !important;
-    height: 30px;
-    font-weight: bold;
-    margin: 10px 0 10px 5px;
-    width: 97%;
-}
+    .create_chat_btn {
+        background-color: rgba(0,0,0,0) !important;
+        border: 0 !important;
+        color: white !important;
+        height: 30px;
+        font-weight: bold;
+        margin: 10px 0 10px 5px;
+        width: 97%;
+    }
 
     .create_chat_btn:hover {
         background-color: rgba(47,47,47,1) !important;
@@ -127,16 +133,12 @@ html {
     text-align: left;
     margin-left: 5px;
     padding-left: 15px;
+    border-radius: 12px;
 }
 
     .chat_btn:hover {
         background-color: rgba(47,47,47,1) !important;
-        border-radius: 12px;
     }
-
-.msg_container text {
-    color: rgba(255, 255, 255, 1) !important;
-}
 
 .contacts_card {
     background-color: rgba(23,23,23,1);
@@ -216,22 +218,28 @@ html {
         color: rgba(255, 255, 255, 0.6);
     }
 
-.msg_container {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: 10px;
-    padding: 3px 40px 3px 15px;
+.msg_container{
+    padding: 6px 25px 15px 10px;
     position: relative;
-    border: none;
     max-width: 70%;
+    border-radius: 12px;
+    border: 0 !important;
 }
+
+    .msg_container:hover {
+        background-color: rgba(46,46,46,1) !important;
+    }
+        .msg_container:hover .msg_time {
+            color: rgba(99, 99, 99, 1);
+        }
+
 
 .msg_time {
     position: absolute;
     bottom: 1px;
     right: 10px;
     font-size: 10px;
-    color: #555;
+    color: rgba(0,0,0,0);
 }
 
 .msg_cotainer_send {
@@ -327,12 +335,12 @@ body, html {
     margin: 0px, 0px, 0px, 0px;
 }
 
-.row>*{
+.row > * {
     padding-right: 0 !important;
     padding-left: 0 !important;
 }
 
-.pb-3{
+.pb-3 {
     height: 100% !important;
     padding-bottom: 0 !important;
 }
