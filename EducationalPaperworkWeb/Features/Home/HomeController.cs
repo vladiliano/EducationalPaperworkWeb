@@ -1,4 +1,5 @@
 using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
+using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
@@ -50,8 +51,8 @@ namespace EducationalPaperworkWeb.Views.Home
                     _usersState.TryAdd(userId.Data, new UserViewModel
                     {
                         Id = userId.Data,
-                        UserChats = chats.Data.Select(chat => new UserChat 
-                        { 
+                        UserChats = chats.Data.Select(chat => new UserChat
+                        {
                             Chat = chat
                         })
                           .OrderBy(x => x.Chat.TimeStamp)
@@ -70,109 +71,25 @@ namespace EducationalPaperworkWeb.Views.Home
         {
             var messages = await _chatService.GetChatMessagesAsync(chatId);
 
-            if (messages.StatusCode != OperationStatusCode.InternalServerError)
+            switch (messages.StatusCode)
             {
-                var userId = _chatService.GetUserId(HttpContext);
-
-                var chat = _usersState[userId.Data].UserChats.FirstOrDefault(x => x.Chat.Id == chatId);
-
-                if (chat != null)
-                {
-                    chat.Messages = messages.Data;
-                    _usersState[userId.Data].SelectedChatId = chatId;
-
-                    return View("Index", _usersState[userId.Data]);
-                }
+                case OperationStatusCode.NoContent: return NoContent();
+                case OperationStatusCode.InternalServerError: return Error(nameof(LoadChat) + messages.Description);
+                default: return Ok(messages.Data);
             }
-
-            return Error(nameof(LoadChat));
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage(string message)
+        public async Task<IActionResult> SendMessage(long senderId, long chatId, string mess)
         {
-            var userId = _chatService.GetUserId(HttpContext);
+            var message = await _chatService.CreateMessageAsync(senderId, chatId, mess);
 
-            if (userId.StatusCode == OperationStatusCode.OK)
+            switch (message.StatusCode)
             {
-                var result = await _chatService.CreateMessageAsync(userId.Data, message, _usersState[userId.Data]);
-
-                if(result.StatusCode != OperationStatusCode.InternalServerError)
-                {
-                    return View("Index", _usersState[userId.Data]);
-                }
+                case OperationStatusCode.NoContent: return NoContent();
+                case OperationStatusCode.InternalServerError: return Error(nameof(SendMessage) + message.Description);
+                default: return Ok();
             }
-            return Error(nameof(LoadChat));
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateChat()
-        //{
-
-        //}
     }
 }
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 3,
-//    RecipientId = 1,
-//    TimeStamp = new DateTime(2024, 3, 19, 9,25,0),
-//    Content = "Доброго дня!"
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 1,
-//    RecipientId = 3,
-//    TimeStamp = new DateTime(2024, 3, 20, 12, 38, 0),
-//    Content = "Доброго!"
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 3,
-//    RecipientId = 1,
-//    TimeStamp = new DateTime(2024, 3, 20, 13, 21, 0),
-//    Content = "Вам треба оформити документ про те що Ви являєтесь студентом який навчається в нашому університеті, чи якесь інше питання вирішити?"
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 1,
-//    RecipientId = 3,
-//    TimeStamp = new DateTime(2024, 3, 20, 13, 34, 0),
-//    Content = "Взагалі то я по іншому питаню."
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 3,
-//    RecipientId = 1,
-//    TimeStamp = new DateTime(2024, 3, 20, 13, 57, 0),
-//    Content = "По якому тоді? Бо в темі чату Ви нічого не вказали."
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 1,
-//    RecipientId = 3,
-//    TimeStamp = new DateTime(2024, 3, 20, 15, 37, 0),
-//    Content = "Мені треба дистанційно отримати диплом."
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 3,
-//    RecipientId = 1,
-//    TimeStamp = new DateTime(2024, 3, 20, 15, 59, 0),
-//    Content = "Це не до нас Вам звертатись треба, пишіть на пошту НТУ ХПІ Вашої кафедри."
-//});
-//await _chatService.CreateMessageAsync(new Message
-//{
-//    ChatId = 2,
-//    SenderId = 1,
-//    RecipientId = 3,
-//    TimeStamp = new DateTime(2024, 3, 20, 16, 7, 0),
-//    Content = "Добре, дякую за відповідь."
-//});

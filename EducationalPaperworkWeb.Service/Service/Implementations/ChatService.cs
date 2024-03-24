@@ -75,7 +75,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<Message>> CreateMessageAsync(long userId, string text, UserViewModel userState)
+        public async Task<IBaseResponse<Message>> CreateMessageAsync(long userId, long chatId, string text)
         {
             try
             {
@@ -88,14 +88,15 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                var chatId = userState.SelectedChatId;
-                var chat = userState.UserChats.FirstOrDefault(x => x.Chat.Id == chatId);
+                var chat = await _repository.ChatRepository.GetAll().FirstOrDefaultAsync(x => x.Id == chatId);
+
+                if (chat == null) throw new Exception($"Чату з id = {chatId} не знайдено!");
 
                 await _repository.MessageRepository.CreateAsync(new Message()
                 {
                     ChatId = chatId,
                     SenderId = userId,
-                    RecipientId = userId == chat.Chat.StudentId ? chat.Chat.AdminId : chat.Chat.StudentId,
+                    RecipientId = userId == chat.StudentId ? chat.AdminId : chat.StudentId,
                     Content = text,
                     TimeStamp = DateTime.Now
                 });
@@ -103,9 +104,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 var existingMessage = _repository.MessageRepository.GetAll()
                     .OrderBy(x => x.TimeStamp).Last();
 
-                if (existingMessage == null) throw new Exception($"При спробі отримати останнє додане повідомлення сталася помилка! {nameof(existingMessage)} == {existingMessage}.");
-
-                chat.Messages.Add(existingMessage);
+                if (existingMessage == null) throw new Exception($"При спробі отримати останнє додане повідомлення сталася помилка!");
 
                 return new BaseResponse<Message>()
                 {
