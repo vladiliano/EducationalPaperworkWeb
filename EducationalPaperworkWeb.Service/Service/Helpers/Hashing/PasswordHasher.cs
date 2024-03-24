@@ -5,7 +5,7 @@ namespace EducationalPaperworkWeb.Service.Service.Helpers.Hashing
 {
     public static class PasswordHasher
     {
-        public static string HashPassowrd(string password)
+        public static string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
             {

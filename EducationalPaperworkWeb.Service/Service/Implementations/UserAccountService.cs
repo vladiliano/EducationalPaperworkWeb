@@ -15,7 +15,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
     {
         private readonly IUnitOfWork _repository;
 
-		public UserAccountService(IUnitOfWork repository, IHttpContextAccessor httpContextAccessor)
+		public UserAccountService(IUnitOfWork repository)
         {
             _repository = repository;
 		}
@@ -47,7 +47,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                existUser.Password = PasswordHasher.HashPassowrd(user.Password);
+                existUser.Password = PasswordHasher.HashPassword(user.Password);
                 await _repository.UserRepository.UpdateAsync(existUser);
 
                 return new BaseResponse<bool>()
@@ -85,7 +85,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                if (existUser.Password != PasswordHasher.HashPassowrd(user.Password))
+                if (existUser.Password != PasswordHasher.HashPassword(user.Password))
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
@@ -131,7 +131,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                user.Password = PasswordHasher.HashPassowrd(user.Password);
+                user.Password = PasswordHasher.HashPassword(user.Password);
 
                 await _repository.UserRepository.CreateAsync(user);
 

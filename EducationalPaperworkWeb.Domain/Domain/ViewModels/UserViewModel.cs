@@ -1,6 +1,6 @@
 ﻿namespace EducationalPaperworkWeb.Domain.Domain.ViewModels
 {
-    public class UserHomePageViewModel
+    public class UserViewModel
     {
         public long Id { get; set; }
         public long SelectedChatId { get; set; }

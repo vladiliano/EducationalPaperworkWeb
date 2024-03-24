@@ -1,12 +1,10 @@
-﻿using Azure;
-using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 
 namespace EducationalPaperworkWeb.Features.UserAccount
 {

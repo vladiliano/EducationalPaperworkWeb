@@ -23,6 +23,7 @@ namespace EducationalPaperworkWeb
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserAccountService, UserAccountService>();
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public static void RegisterDataBase(this IServiceCollection services, string connectionString)

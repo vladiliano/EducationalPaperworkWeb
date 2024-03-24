@@ -1,8 +1,10 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
+using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb.Service.Service.Implementations
@@ -30,7 +32,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     .OrderBy(x => x.TimeStamp)
                     .Last();
 
-                if (existingChat == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(existingChat)} == {existingChat}");
+                if (existingChat == null) throw new Exception($"При спробі отримати останній доданий чат сталася помилка! {nameof(existingChat)} == {existingChat}");
 
                 return new BaseResponse<Chat>()
                 {
@@ -43,26 +45,67 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             {
                 return new BaseResponse<Chat>()
                 {
-                    Description = ex.Message,
+                    Description = nameof(CreateChatAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
                 };
             }
         }
 
-        public async Task<IBaseResponse<Message>> CreateMessageAsync(Message message)
+        public IBaseResponse<long> GetUserId(HttpContext context)
         {
             try
             {
-                if (message == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(message)} == {message}");
+                if (!long.TryParse(context.User.FindFirst("UserId")?.Value, out long userId))
+                    throw new Exception("Помилка при спробі отримати Id користувача!");
 
-                message.TimeStamp = DateTime.Now;
+                return new BaseResponse<long>()
+                {
+                    Description = "Id користувача успішно отримано!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = userId
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<long>()
+                {
+                    Description = nameof(GetUserId) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
+                };
+            }
+        }
 
-                await _repository.MessageRepository.CreateAsync(message);
+        public async Task<IBaseResponse<Message>> CreateMessageAsync(long userId, string text, UserViewModel userState)
+        {
+            try
+            {
+                if (text == null || text == string.Empty)
+                {
+                    return new BaseResponse<Message>()
+                    {
+                        Description = "Повідомлення порожнє!",
+                        StatusCode = OperationStatusCode.NoContent,
+                    };
+                }
+
+                var chatId = userState.SelectedChatId;
+                var chat = userState.UserChats.FirstOrDefault(x => x.Chat.Id == chatId);
+
+                await _repository.MessageRepository.CreateAsync(new Message()
+                {
+                    ChatId = chatId,
+                    SenderId = userId,
+                    RecipientId = userId == chat.Chat.StudentId ? chat.Chat.AdminId : chat.Chat.StudentId,
+                    Content = text,
+                    TimeStamp = DateTime.Now
+                });
 
                 var existingMessage = _repository.MessageRepository.GetAll()
                     .OrderBy(x => x.TimeStamp).Last();
 
-                if (existingMessage == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(existingMessage)} == {existingMessage}");
+                if (existingMessage == null) throw new Exception($"При спробі отримати останнє додане повідомлення сталася помилка! {nameof(existingMessage)} == {existingMessage}.");
+
+                chat.Messages.Add(existingMessage);
 
                 return new BaseResponse<Message>()
                 {
@@ -75,7 +118,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             {
                 return new BaseResponse<Message>()
                 {
-                    Description = ex.Message,
+                    Description = nameof(CreateMessageAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
                 };
             }
@@ -94,7 +137,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 {
                     return new BaseResponse<List<Message>>()
                     {
-                        StatusCode = OperationStatusCode.NotFound,
+                        StatusCode = OperationStatusCode.NoContent,
                         Description = "Повідомлень в чаті не знайдено!",
                         Data = new List<Message>(0)
                     };
@@ -111,7 +154,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             {
                 return new BaseResponse<List<Message>>()
                 {
-                    Description = ex.Message,
+                    Description = nameof(GetChatMessagesAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
                 };
             }
@@ -130,8 +173,8 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 				{
 					return new BaseResponse<List<Chat>>()
 					{
-						StatusCode = OperationStatusCode.NotFound,
-						Description = "Повідомлень в чаті не знайдено!",
+						StatusCode = OperationStatusCode.NoContent,
+						Description = "Чатів не знайдено!",
 					};
 				}
 
@@ -146,8 +189,8 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 			{
 				return new BaseResponse<List<Chat>>()
 				{
-					Description = ex.Message,
-					StatusCode = OperationStatusCode.InternalServerError,
+                    Description = nameof(GetUserChatsAsync) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
 				};
 			}
 		}

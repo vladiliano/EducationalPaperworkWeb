@@ -1,10 +1,9 @@
 using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
-using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
+using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -14,13 +13,24 @@ namespace EducationalPaperworkWeb.Views.Home
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IChatService _chatService;
+        private readonly IUserService _userService;
+        private static Dictionary<long, UserViewModel> _usersState = new();
 
-        private static UserHomePageViewModel _userHomePageState;
-
-        public HomeController(ILogger<HomeController> logger, IChatService service)
+        public HomeController(ILogger<HomeController> logger, IChatService chatService, IUserService userService)
         {
             _logger = logger;
-            _chatService = service;
+            _chatService = chatService;
+            _userService = userService;
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error(string message)
+        {
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                Message = message
+            });
         }
 
         [HttpGet]
@@ -29,43 +39,31 @@ namespace EducationalPaperworkWeb.Views.Home
             if (!HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("SignIn", "UserAccount");
 
-            if (!long.TryParse(HttpContext.User.FindFirstValue("UserId"), out long userId))
-                return View("Error");
+            var userId = _chatService.GetUserId(HttpContext);
 
-            var chats = await _chatService.GetUserChatsAsync(userId);
-            if (chats.StatusCode != OperationStatusCode.OK)
-                return View("Error");
-
-            List<UserChat> userChats = new List<UserChat>(chats.Data.Count);
-
-            foreach (var chat in chats.Data)
+            if (userId.StatusCode == OperationStatusCode.OK)
             {
-                //var messagesResponse = await _chatService.GetChatMessagesAsync(chat.Id);
+                var chats = await _chatService.GetUserChatsAsync(userId.Data);
 
-                //if (messagesResponse.StatusCode == OperationStatusCode.InternalServerError)
-                //    return View("Error");
-
-                userChats.Add(new UserChat
+                if (chats.StatusCode != OperationStatusCode.InternalServerError)
                 {
-                    Chat = chat,
-                    //Messages = messagesResponse.Data
-                });
+                    _usersState.TryAdd(userId.Data, new UserViewModel
+                    {
+                        Id = userId.Data,
+                        UserChats = chats.Data.Select(chat => new UserChat 
+                        { 
+                            Chat = chat
+                        })
+                          .OrderBy(x => x.Chat.TimeStamp)
+                          .ToList()
+                    });
+
+                    return View(_usersState[userId.Data]);
+                }
             }
 
-            _userHomePageState = new UserHomePageViewModel
-            {
-                Id = userId,
-                UserChats = userChats.OrderBy(x => x.Chat.TimeStamp).ToList()
-            };
-
-            return View(_userHomePageState);
+            return Error(nameof(Index));
         }
-
-        [HttpPost]
-        public async Task<IActionResult> SendMessage(string message)
-        {
-            return View(_userHomePageState);
-		}
 
         [HttpPost]
         public async Task<IActionResult> LoadChat(long chatId)
@@ -74,89 +72,107 @@ namespace EducationalPaperworkWeb.Views.Home
 
             if (messages.StatusCode != OperationStatusCode.InternalServerError)
             {
-                if (_userHomePageState != null)
-                {
-                    var chat = _userHomePageState.UserChats.FirstOrDefault(x => x.Chat.Id == chatId);
+                var userId = _chatService.GetUserId(HttpContext);
 
-                    if (chat != null)
-                    {
-                        chat.Messages = messages.Data;
-                        _userHomePageState.SelectedChatId = chatId;
-                    }
+                var chat = _usersState[userId.Data].UserChats.FirstOrDefault(x => x.Chat.Id == chatId);
+
+                if (chat != null)
+                {
+                    chat.Messages = messages.Data;
+                    _usersState[userId.Data].SelectedChatId = chatId;
+
+                    return View("Index", _usersState[userId.Data]);
                 }
             }
 
-            return View("Index", _userHomePageState);
+            return Error(nameof(LoadChat));
         }
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 3,
-            //    RecipientId = 1,
-            //    TimeStamp = new DateTime(2024, 3, 19, 9,25,0),
-            //    Content = "Доброго дня!"
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 1,
-            //    RecipientId = 3,
-            //    TimeStamp = new DateTime(2024, 3, 20, 12, 38, 0),
-            //    Content = "Доброго!"
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 3,
-            //    RecipientId = 1,
-            //    TimeStamp = new DateTime(2024, 3, 20, 13, 21, 0),
-            //    Content = "Вам треба оформити документ про те що Ви являєтесь студентом який навчається в нашому університеті, чи якесь інше питання вирішити?"
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 1,
-            //    RecipientId = 3,
-            //    TimeStamp = new DateTime(2024, 3, 20, 13, 34, 0),
-            //    Content = "Взагалі то я по іншому питаню."
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 3,
-            //    RecipientId = 1,
-            //    TimeStamp = new DateTime(2024, 3, 20, 13, 57, 0),
-            //    Content = "По якому тоді? Бо в темі чату Ви нічого не вказали."
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 1,
-            //    RecipientId = 3,
-            //    TimeStamp = new DateTime(2024, 3, 20, 15, 37, 0),
-            //    Content = "Мені треба дистанційно отримати диплом."
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 3,
-            //    RecipientId = 1,
-            //    TimeStamp = new DateTime(2024, 3, 20, 15, 59, 0),
-            //    Content = "Це не до нас Вам звертатись треба, пишіть на пошту НТУ ХПІ Вашої кафедри."
-            //});
-            //await _chatService.CreateMessageAsync(new Message
-            //{
-            //    ChatId = 2,
-            //    SenderId = 1,
-            //    RecipientId = 3,
-            //    TimeStamp = new DateTime(2024, 3, 20, 16, 7, 0),
-            //    Content = "Добре, дякую за відповідь."
-            //});
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(string message)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var userId = _chatService.GetUserId(HttpContext);
+
+            if (userId.StatusCode == OperationStatusCode.OK)
+            {
+                var result = await _chatService.CreateMessageAsync(userId.Data, message, _usersState[userId.Data]);
+
+                if(result.StatusCode != OperationStatusCode.InternalServerError)
+                {
+                    return View("Index", _usersState[userId.Data]);
+                }
+            }
+            return Error(nameof(LoadChat));
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> CreateChat()
+        //{
+
+        //}
     }
 }
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 3,
+//    RecipientId = 1,
+//    TimeStamp = new DateTime(2024, 3, 19, 9,25,0),
+//    Content = "Доброго дня!"
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 1,
+//    RecipientId = 3,
+//    TimeStamp = new DateTime(2024, 3, 20, 12, 38, 0),
+//    Content = "Доброго!"
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 3,
+//    RecipientId = 1,
+//    TimeStamp = new DateTime(2024, 3, 20, 13, 21, 0),
+//    Content = "Вам треба оформити документ про те що Ви являєтесь студентом який навчається в нашому університеті, чи якесь інше питання вирішити?"
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 1,
+//    RecipientId = 3,
+//    TimeStamp = new DateTime(2024, 3, 20, 13, 34, 0),
+//    Content = "Взагалі то я по іншому питаню."
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 3,
+//    RecipientId = 1,
+//    TimeStamp = new DateTime(2024, 3, 20, 13, 57, 0),
+//    Content = "По якому тоді? Бо в темі чату Ви нічого не вказали."
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 1,
+//    RecipientId = 3,
+//    TimeStamp = new DateTime(2024, 3, 20, 15, 37, 0),
+//    Content = "Мені треба дистанційно отримати диплом."
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 3,
+//    RecipientId = 1,
+//    TimeStamp = new DateTime(2024, 3, 20, 15, 59, 0),
+//    Content = "Це не до нас Вам звертатись треба, пишіть на пошту НТУ ХПІ Вашої кафедри."
+//});
+//await _chatService.CreateMessageAsync(new Message
+//{
+//    ChatId = 2,
+//    SenderId = 1,
+//    RecipientId = 3,
+//    TimeStamp = new DateTime(2024, 3, 20, 16, 7, 0),
+//    Content = "Добре, дякую за відповідь."
+//});

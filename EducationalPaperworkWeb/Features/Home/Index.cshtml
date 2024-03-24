@@ -1,5 +1,5 @@
 ﻿@using EducationalPaperworkWeb.Domain.Domain.ViewModels
-@model UserHomePageViewModel
+@model UserViewModel
 
 <!DOCTYPE html>
 <html>
@@ -7,15 +7,16 @@
     <title>Chat</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
-    <link rel="stylesheet" href="~/css/home-chat.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/StyleSheet.css" />
     <script src="~/js/home.js"></script>
     <style>
         .col-left {
-            width: 20%;
+            width: 15%;
         }
 
         .col-right {
-            width: 80%;
+            width: 85%;
         }
     </style>
 </head>
@@ -24,7 +25,7 @@
         <div class="row justify-content-center h-100">
             <div class=" chat col-left">
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
-                    <button class="create_chat_btn">Створити звернення</button>
+                    <button class="create_chat_btn"><i class="material-icons" id="create_chat_icon">add_box</i>Створити звернення</button>
                     <div class="card-body contacts_body">
                         <form asp-controller="Home" method="post">
                             @foreach (var chat in Model.UserChats)
@@ -42,16 +43,16 @@
                         <div class="d-flex bd-highlight">
                             <div class="user_info">
                                 <span>Ноунейм Ноунеймович</span>
+                                <span id="action_menu_btn"><i class="fas fa-angle-down"></i></span>
+                                <div class="action_menu" style="display: none">
+                                    <ul>
+                                        <li><i class="fas fa-user-circle"></i> View profile</li>
+                                        <li><i class="fas fa-users"></i> Add to close friends</li>
+                                        <li><i class="fas fa-plus"></i> Add to group</li>
+                                        <li><i class="fas fa-ban"></i> Block</li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
-                        <div class="action_menu">
-                            <ul>
-                                <li><i class="fas fa-user-circle"></i> View profile</li>
-                                <li><i class="fas fa-users"></i> Add to close friends</li>
-                                <li><i class="fas fa-plus"></i> Add to group</li>
-                                <li><i class="fas fa-ban"></i> Block</li>
-                            </ul>
                         </div>
                     </div>
                     <div class="card-body msg_card_body">
@@ -79,10 +80,6 @@
                                         </div>
                                     }
                                 }
-                                else
-                                {
-                                    
-                                }
                             }
                         }
                     </div>
@@ -92,7 +89,7 @@
                                 <div class="input-group-append">
                                     <button asp-action="SendFile" type="submit" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></button>
                                 </div>
-                                <textarea name="message" class="form-control type_msg" placeholder="Type your message..."></textarea>
+                                <textarea id="inputMessage" name="message" class="form-control type_msg" placeholder="Type your message..."></textarea>
                                 <div class="input-group-append">
                                     <button asp-action="SendMessage" type="submit" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
                                 </div>
