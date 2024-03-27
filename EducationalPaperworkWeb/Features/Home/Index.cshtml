@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="~/css/chat.css" />
-    <script src="~/js/user-chat-scripts.js"></script>
+    <script src="~/js/chat.js"></script>
     <style>
         .col-left {
             width: 15%;
@@ -28,9 +28,9 @@
                     <button class="create_chat_btn"><i class="material-icons" id="create_chat_icon">add_box</i>Створити звернення</button>
                     <div class="card-body contacts_body">
                         <form asp-controller="Home" method="post">
-                            @foreach (var chat in Model.UserChats)
+                            @foreach (var chat in Model.Chats)
                             {
-                                <button name="chatId" value="@chat.Chat.Id" class="chat_btn">@chat.Chat.Name</button>
+                                <button name="chatId" value="@chat.Id" class="chat_btn">@chat.Name</button>
                             }
                         </form>
                     </div>
@@ -39,11 +39,11 @@
             </div>
             <div id="chatContainer" class="chat col-right">
                 <div class="card">
-                    <div class="card-header msg_head">
+                    <div id="card-header" class="card-header msg_head" style="visibility: hidden">
                         <div class="d-flex bd-highlight">
                             <div class="user_info">
-                                <span>Ноунейм Ноунеймович</span>
-                                <span id="action_menu_btn"><i class="fas fa-angle-down"></i></span>
+                                <span id="companion-name"></span>
+                                <span id="action_menu_btn" class="toggle_menu"><i class="fas fa-angle-down"></i></span>
                                 <div class="action_menu">
                                     <ul>
                                         <li><i class="fas fa-user-circle"></i> View profile</li>
@@ -55,14 +55,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body msg_card_body"></div>
+                    <div class="card-body msg_card_body">
+                        <div class="hello-form" style="font-size: 15px; display: flex;">
+                            Оберіть чат або надішліть звернення для його створення
+                        </div>
+                    </div>
                     <div class="card-footer">
-                        <form id="sendMessageForm">
+                        <form id="sendMessageForm" style="visibility: hidden">
                             <div class="input-group">
                                 <div class="input-group-append">
                                     <button type="submit" class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></button>
                                 </div>
-                                <textarea id="inputMessage" name="message" class="form-control type_msg" placeholder="Type your message..."></textarea>
+                                <textarea id="inputMessage" name="message" class="form-control type_msg"  maxlength="600" placeholder="Введіть повідомлення..."></textarea>
                                 <div class="input-group-append">
                                     <button type="submit" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
                                 </div>
@@ -70,67 +74,71 @@
                         </form>
                     </div>
                 </div>
-            </div>
-                      @*string time = string.Empty;
-                        if (message.TimeStamp.Year == DateTime.Now.Year
-                        && message.TimeStamp.Month == DateTime.Now.Month
-                        && message.TimeStamp.Day == DateTime.Now.Day) time = "Сьогодні о ";
-                        else if (message.TimeStamp.Year == DateTime.Now.Year
-                        && message.TimeStamp.Month == DateTime.Now.Month
-                        && message.TimeStamp.Day == DateTime.Now.Day - 1) time = "Вчора о ";
-                        else time = message.TimeStamp.ToString("d MMMM о ", new CultureInfo("uk-UA"));*@
-                    
+            </div>                    
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         var chatId;
-        var senderId = '@Model.Id';
+        var senderId = '@Model.UserId';
 
         $(document).ready(function () {
+            $('#inputMessage').on('keypress', function (e) {
+                if (e.keyCode == 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
             $('.send_btn').click(function (e) {
                 if ($(this).hasClass('send_btn')) {
                     e.preventDefault();
-
-                    var messageContent = $('#inputMessage').val();
-
-                    $.ajax({
-                        url: '/Home/SendMessage',
-                        method: 'POST',
-                        data: {
-                            senderId: senderId,
-                            chatId: chatId,
-                            mess: messageContent
-                        },
-                        success: function (data, textStatus, xhr) {
-                            if (xhr.status !== 204) {
-                                addMessage(messageContent);
-                            }
-                        }
-                    });
+                    sendMessage();
                 }
             });
 
             $('.chat_btn').click(function (e) {
                 e.preventDefault();
                 
-                chatId = $(this).val();
+                perChatId = $(this).val();
 
-                $.ajax({
-                    url: '/Home/LoadChat',
-                    method: 'POST',
-                    data: {
-                        senderId: senderId,
-                        chatId: chatId
-                    },
-                    success: function (data) {
-                        updateChat(senderId, data);
-                    }
-                });
+                if (perChatId !== chatId) {
+
+                    chatId = perChatId;
+
+                    $.ajax({
+                        url: '/Home/LoadChat',
+                        method: 'POST',
+                        data: {
+                            senderId: senderId,
+                            chatId: chatId
+                        },
+                        success: function (data) {
+                            updateChat(senderId, data);
+
+                            $('#sendMessageForm').css('visibility', 'visible');
+                            $('#card-header').css('visibility', 'visible');
+                        }
+                    });
+                }
             });
 
             $('#action_menu_btn').click(function () {
                 $('.action_menu').toggle();
+            });
+
+            var previousClickedBtn = null;
+
+            $('.chat_btn').click(function (e) {
+                e.preventDefault();
+
+                if (previousClickedBtn !== null) {
+                    $(previousClickedBtn).removeClass('selected');
+                }
+
+                $(this).addClass('selected');
+
+                previousClickedBtn = this;
             });
         });
     </script>

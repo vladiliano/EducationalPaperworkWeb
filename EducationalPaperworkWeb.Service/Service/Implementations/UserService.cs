@@ -2,9 +2,9 @@
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
-using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb.Service.Service.Implementations
 {
@@ -16,11 +16,11 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             _repository = repository;
         }
-        public IBaseResponse<User> GetUserById(long id)
+        public async Task<IBaseResponse<User>> GetUserAsync(long id)
         {
             try
             {
-                var user = _repository.UserRepository.GetAll().FirstOrDefault(x => x.Id == id);
+                var user = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
 
                 if (user == null)
                 {
@@ -42,8 +42,31 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             {
                 return new BaseResponse<User>()
                 {
-                    Description = nameof(GetUserById) + ": " + ex.Message,
+                    Description = nameof(GetUserAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError
+                };
+            }
+        }
+        public IBaseResponse<long> GetUserId(HttpContext context)
+        {
+            try
+            {
+                if (!long.TryParse(context.User.FindFirst("UserId")?.Value, out long userId))
+                    throw new Exception("Помилка при спробі отримати Id користувача!");
+
+                return new BaseResponse<long>()
+                {
+                    Description = "Id користувача успішно отримано!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = userId
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<long>()
+                {
+                    Description = nameof(GetUserId) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
                 };
             }
         }

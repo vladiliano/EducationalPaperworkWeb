@@ -15,7 +15,6 @@ namespace EducationalPaperworkWeb.Views.Home
         private readonly ILogger<HomeController> _logger;
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
-        private static Dictionary<long, UserViewModel> _usersState = new();
 
         public HomeController(ILogger<HomeController> logger, IChatService chatService, IUserService userService)
         {
@@ -27,7 +26,7 @@ namespace EducationalPaperworkWeb.Views.Home
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(string message)
         {
-            return View(new ErrorViewModel
+            return View("Error", new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 Message = message
@@ -40,7 +39,7 @@ namespace EducationalPaperworkWeb.Views.Home
             if (!HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("SignIn", "UserAccount");
 
-            var userId = _chatService.GetUserId(HttpContext);
+            var userId = _userService.GetUserId(HttpContext);
 
             if (userId.StatusCode == OperationStatusCode.OK)
             {
@@ -48,18 +47,11 @@ namespace EducationalPaperworkWeb.Views.Home
 
                 if (chats.StatusCode != OperationStatusCode.InternalServerError)
                 {
-                    _usersState.TryAdd(userId.Data, new UserViewModel
+                    return View(new UserViewModel
                     {
-                        Id = userId.Data,
-                        UserChats = chats.Data.Select(chat => new UserChat
-                        {
-                            Chat = chat
-                        })
-                          .OrderBy(x => x.Chat.TimeStamp)
-                          .ToList()
+                        UserId = userId.Data,
+                        Chats = chats.Data
                     });
-
-                    return View(_usersState[userId.Data]);
                 }
             }
 
@@ -67,7 +59,7 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoadChat(long chatId)
+        public async Task<IActionResult> LoadChat(long senderId, long chatId)
         {
             var messages = await _chatService.GetChatMessagesAsync(chatId);
 
@@ -75,20 +67,31 @@ namespace EducationalPaperworkWeb.Views.Home
             {
                 case OperationStatusCode.NoContent: return NoContent();
                 case OperationStatusCode.InternalServerError: return Error(nameof(LoadChat) + messages.Description);
-                default: return Ok(messages.Data);
+                default:
+                    var recepient = await _chatService.GetCompanion(senderId, chatId);
+                    if(recepient.StatusCode == OperationStatusCode.InternalServerError) 
+                        return Error(nameof(LoadChat) + "Не вдалось отримати співбесідника.");
+
+                    var dataToSend = new
+                    {
+                        Messages = messages.Data,
+                        Companion = $"{recepient.Data.Surname} {recepient.Data.Name} {recepient.Data.Patronymic}"
+                    };
+
+                    return Ok(dataToSend);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> SendMessage(long senderId, long chatId, string mess)
         {
-            var message = await _chatService.CreateMessageAsync(senderId, chatId, mess);
+            var messages = await _chatService.CreateMessageAsync(senderId, chatId, mess);
 
-            switch (message.StatusCode)
+            switch (messages.StatusCode)
             {
                 case OperationStatusCode.NoContent: return NoContent();
-                case OperationStatusCode.InternalServerError: return Error(nameof(SendMessage) + message.Description);
-                default: return Ok();
+                case OperationStatusCode.InternalServerError: return Error(nameof(SendMessage) + messages.Description);
+                default: return Ok(messages.Data["prevMessage"]);
             }
         }
     }

@@ -24,7 +24,23 @@ html {
     overflow-y: auto;
     width: 70%;
     align-self: center;
+    display: flex;
+    height: 0;
+    flex-direction: column;
 }
+
+    .msg_card_body::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .msg_card_body::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .msg_card_body::-webkit-scrollbar-thumb {
+        background-color: rgba(47, 47, 47, 1);
+        border-radius: 4px;
+    }
 
 .card-header {
     border-bottom: 0 !important;
@@ -75,9 +91,17 @@ html {
     background-color: rgba(0, 0, 0, 0.3) !important;
     border: 0 !important;
     color: white !important;
-    height: 60px !important;
+    height: 50px !important;
     overflow-y: hidden;
+    text-align: justify;
+    line-height: 220%;
 }
+
+
+    .type_msg::placeholder {
+        text-align: justify;
+        line-height: 220%;
+    }
 
     .type_msg:focus {
         box-shadow: none !important;
@@ -85,13 +109,13 @@ html {
     }
 
 .attach_btn {
-    border-bottom-left-radius: 20px !important;
-    border-top-left-radius: 20px !important;
+    border-bottom-left-radius: 10px !important;
+    border-top-left-radius: 10px !important;
 }
 
 .send_btn {
-    border-bottom-right-radius: 20px !important;
-    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .attach_btn,
@@ -111,7 +135,8 @@ html {
 
 .create_chat_btn {
     background-color: rgba(0,0,0,0) !important;
-    border: 0 !important;
+    border: none !important;
+    border-radius: 12px;
     color: white !important;
     height: 30px;
     font-weight: bold;
@@ -120,14 +145,13 @@ html {
 }
 
     .create_chat_btn:hover {
-        background-color: rgba(47,47,47,1) !important;
-        border-radius: 12px;
+        background-color: rgba(33,33,33,1) !important;
     }
 
 .chat_btn {
-    background-color: rgba(23,23,23,1) !important;
-    border: 0 !important;
-    color: white !important;
+    background-color: rgba(23,23,23,1);
+    border: none !important;
+    color: white;
     height: 30px;
     width: 97%;
     font-size: .875rem;
@@ -138,7 +162,15 @@ html {
 }
 
     .chat_btn:hover {
-        background-color: rgba(47,47,47,1) !important;
+        background-color: rgba(33,33,33,1);
+    }
+
+.selected {
+    background-color: rgba(47,47,47,1);
+}
+
+    .selected:hover {
+        background-color: rgba(47,47,47,1);
     }
 
 .contacts_card {
@@ -220,7 +252,7 @@ html {
     }
 
 .msg_container {
-    padding: 6px 25px 15px 10px;
+    padding: 6px 25px 13px 10px;
     position: relative;
     max-width: 70%;
     border-radius: 12px;
@@ -228,7 +260,7 @@ html {
 }
 
     .msg_container:hover {
-        background-color: rgba(46,46,46,1) !important;
+        background-color: rgba(40,40,40,1);
     }
 
         .msg_container:hover .msg_time {
@@ -270,8 +302,14 @@ html {
 }
 
 .action_menu {
+    background: rgba(23, 23, 23, 1);
+    min-width: 160px;
+    border-color: none;
+    z-index: 1;
+    position: absolute;
     padding: 15px 0;
-    display: none
+    display: none;
+    margin: 0 10px;
 }
 
     .action_menu ul {
@@ -355,7 +393,39 @@ body, html {
     width: 70%; /* Ширина 70% экрана */
 }
 
+.mb-4 {
+    margin: 1rem 0 1rem 0;
+}
+
 .def-form {
     display: flex;
     flex-direction: column;
+}
+
+.msg_date {
+    text-align: center;
+    min-width: 80px;
+    border-radius: 12px;
+    border: 0;
+    background-color: rgba(40, 40, 40, 1);
+    padding: 2px 0 2px 0;
+    font-size: 12px;
+    user-select: none;
+    margin: 0 auto;
+}
+
+.hello-form {
+    text-align: center;
+    min-width: 80px;
+    border-radius: 12px;
+    border: 0;
+    background-color: rgba(40, 40, 40, 1);
+    font-size: 12px !important;
+    user-select: none;
+    margin: auto;
+    padding: 0 10px 0 10px;
+}
+
+.row {
+    background-color: rgba(23,23,23,1);
 }

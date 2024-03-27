@@ -7,5 +7,6 @@
         public long StudentId { get; set; }
         public long AdminId { get; set; }
         public DateTime TimeStamp { get; set; }
+        public bool IsTaken { get; set; }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
-using EducationalPaperworkWeb.Domain.Domain.ViewModels;
+using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationalPaperworkWeb.Service.Service.Implementations
@@ -22,9 +21,9 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             try
             {
-                if (chat == null) throw new Exception($"{nameof(CreateChatAsync)}: {nameof(chat)} == {chat}");
+                if (chat == null) throw new Exception("Не було надано об'єкт типу Chat.");
 
-                chat.TimeStamp = DateTime.Now;
+                //chat.TimeStamp = DateTime.Now;
 
                 await _repository.ChatRepository.CreateAsync(chat);
 
@@ -32,7 +31,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     .OrderBy(x => x.TimeStamp)
                     .Last();
 
-                if (existingChat == null) throw new Exception($"При спробі отримати останній доданий чат сталася помилка! {nameof(existingChat)} == {existingChat}");
+                if (existingChat == null) throw new Exception("При спробі отримати останній доданий чат сталася помилка!");
 
                 return new BaseResponse<Chat>()
                 {
@@ -51,46 +50,21 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public IBaseResponse<long> GetUserId(HttpContext context)
-        {
-            try
-            {
-                if (!long.TryParse(context.User.FindFirst("UserId")?.Value, out long userId))
-                    throw new Exception("Помилка при спробі отримати Id користувача!");
-
-                return new BaseResponse<long>()
-                {
-                    Description = "Id користувача успішно отримано!",
-                    StatusCode = OperationStatusCode.OK,
-                    Data = userId
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<long>()
-                {
-                    Description = nameof(GetUserId) + ": " + ex.Message,
-                    StatusCode = OperationStatusCode.InternalServerError,
-                };
-            }
-        }
-
-        public async Task<IBaseResponse<Message>> CreateMessageAsync(long userId, long chatId, string text)
+        public async Task<IBaseResponse<Dictionary<string, Message>>> CreateMessageAsync(long userId, long chatId, string text)
         {
             try
             {
                 if (text == null || text == string.Empty)
                 {
-                    return new BaseResponse<Message>()
+                    return new BaseResponse<Dictionary<string, Message>>()
                     {
                         Description = "Повідомлення порожнє!",
                         StatusCode = OperationStatusCode.NoContent,
                     };
                 }
 
-                var chat = await _repository.ChatRepository.GetAll().FirstOrDefaultAsync(x => x.Id == chatId);
-
-                if (chat == null) throw new Exception($"Чату з id = {chatId} не знайдено!");
+                var chat = await _repository.ChatRepository.GetAll().FirstOrDefaultAsync(x => x.Id == chatId) 
+                    ?? throw new Exception($"Чату з id = {chatId} не знайдено!");
 
                 await _repository.MessageRepository.CreateAsync(new Message()
                 {
@@ -101,21 +75,27 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     TimeStamp = DateTime.Now
                 });
 
-                var existingMessage = _repository.MessageRepository.GetAll()
-                    .OrderBy(x => x.TimeStamp).Last();
+                var messages = await _repository.MessageRepository.GetAll()
+                    .Where(x => x.ChatId == chatId)
+                    .OrderByDescending(x => x.TimeStamp)
+                    .Take(2)
+                    .ToListAsync();
 
-                if (existingMessage == null) throw new Exception($"При спробі отримати останнє додане повідомлення сталася помилка!");
+                var mess = new Dictionary<string, Message>();
+                    if(!mess.TryAdd("lastMessage", messages[0]) 
+                    || !mess.TryAdd("prevMessage", messages[1]))
+                    throw new Exception($"Не вдалося отримати остані два повідомлення чату з id {chatId}.");
 
-                return new BaseResponse<Message>()
+                return new BaseResponse<Dictionary<string, Message>>()
                 {
                     Description = "Повідомлення було успішно завантажено!",
                     StatusCode = OperationStatusCode.OK,
-                    Data = existingMessage
+                    Data = mess
                 };
             }
             catch (Exception ex)
             {
-                return new BaseResponse<Message>()
+                return new BaseResponse<Dictionary<string, Message>>()
                 {
                     Description = nameof(CreateMessageAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
@@ -193,5 +173,34 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 				};
 			}
 		}
+
+        public async Task<IBaseResponse<User>> GetCompanion(long userId, long chatId)
+        {
+            try
+            {
+                var chat = await _repository.ChatRepository.GetAll().FirstOrDefaultAsync(x => x.Id == chatId) 
+                    ?? throw new Exception($"Чату з id = {chatId} не знайдено!");
+
+                var companionId = chat.StudentId == userId? chat.AdminId : chat.StudentId;
+
+                var companion = await _repository.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Id == companionId) 
+                    ?? throw new Exception($"Співбесдника з id = {companionId} не знайдено!");
+
+                return new BaseResponse<User>()
+                {
+                    Description = "Користувача знайдено!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = companion
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<User>()
+                {
+                    Description = nameof(GetCompanion) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError
+                };
+            }
+        }
     }
 }
