@@ -174,7 +174,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
 			}
 		}
 
-        public async Task<IBaseResponse<User>> GetCompanion(long userId, long chatId)
+        public async Task<IBaseResponse<User>> GetCompanionAsync(long userId, long chatId)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             {
                 return new BaseResponse<User>()
                 {
-                    Description = nameof(GetCompanion) + ": " + ex.Message,
+                    Description = nameof(GetCompanionAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError
                 };
             }

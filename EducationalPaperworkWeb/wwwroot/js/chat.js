@@ -93,3 +93,36 @@ function sendMessage() {
         }
     });
 }
+
+function selectChat(senderId, chatId) {
+    if (previousClickedBtn !== null) {
+        $(previousClickedBtn).removeClass('selected');
+    }
+
+    $(this).addClass('selected');
+    previousClickedBtn = this;
+
+    $.ajax({
+        url: '/Home/LoadChat',
+        method: 'POST',
+        data: {
+            senderId: senderId,
+            chatId: chatId
+        },
+        success: function (data, textStatus, xhr) {
+            if (xhr.status === 204) {
+                $('#sendMessageForm').css('visibility', 'hidden');
+                $('#card-header').css('visibility', 'hidden');
+                var newMessageHtml = `
+                    <div id="hello-world" class="hello-form" style="font-size: 15px; display: flex;">
+                        Очікується підтвердження звернення від представника дирекції університету
+                    </div>`;
+                $('.msg_card_body').html(newMessageHtml);
+            } else {
+                updateChat(senderId, data);
+                $('#sendMessageForm').css('visibility', 'visible');
+                $('#card-header').css('visibility', 'visible');
+            }
+        }
+    });
+}

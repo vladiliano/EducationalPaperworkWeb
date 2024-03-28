@@ -61,25 +61,32 @@ namespace EducationalPaperworkWeb.Views.Home
         [HttpPost]
         public async Task<IActionResult> LoadChat(long senderId, long chatId)
         {
+            var chats = await _chatService.GetUserChatsAsync(senderId);
+
+            if (chats.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(LoadChat) + chats.Description);
+
+            var chat = chats.Data.FirstOrDefault(x => x.Id == chatId);
+
+            if (chat != null && !chat.IsTaken) return NoContent();
+
             var messages = await _chatService.GetChatMessagesAsync(chatId);
 
-            switch (messages.StatusCode)
+            if (messages.StatusCode == OperationStatusCode.InternalServerError)
+                return Error(nameof(LoadChat) + messages.Description);
+
+            var recepient = await _chatService.GetCompanionAsync(senderId, chatId);
+
+            if (recepient.StatusCode == OperationStatusCode.InternalServerError)
+                return Error(nameof(LoadChat) + recepient.Description);
+
+            var dataToSend = new
             {
-                case OperationStatusCode.NoContent: return NoContent();
-                case OperationStatusCode.InternalServerError: return Error(nameof(LoadChat) + messages.Description);
-                default:
-                    var recepient = await _chatService.GetCompanion(senderId, chatId);
-                    if(recepient.StatusCode == OperationStatusCode.InternalServerError) 
-                        return Error(nameof(LoadChat) + "Не вдалось отримати співбесідника.");
+                Messages = messages.Data,
+                Companion = $"{recepient.Data.Surname} {recepient.Data.Name} {recepient.Data.Patronymic}"
+            };
 
-                    var dataToSend = new
-                    {
-                        Messages = messages.Data,
-                        Companion = $"{recepient.Data.Surname} {recepient.Data.Name} {recepient.Data.Patronymic}"
-                    };
-
-                    return Ok(dataToSend);
-            }
+            return Ok(dataToSend);
         }
 
         [HttpPost]
