@@ -1,7 +1,8 @@
 ﻿body,
 html {
+    min-width: 600px;
+    scrollbar-width: none;
     height: 100%;
-    margin: 0;
     color: rgba(255,255,255,1);
 }
 
@@ -131,7 +132,16 @@ html {
 .create_chat_btn,
 .chat_btn {
     cursor: default !important;
+    outline: none !important;
 }
+
+    .attach_btn:focus,
+    .send_btn:focus,
+    .create_chat_btn:focus,
+    .chat_btn:focus {
+        outline: none !important;
+        -webkit-tap-highlight-color: transparent;
+    }
 
 .create_chat_btn {
     background-color: rgba(0,0,0,0) !important;
@@ -359,15 +369,6 @@ html {
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
-
-/* custom-styles.css */
-
-body, html {
-    height: 100%;
-    margin: 0;
-    background: #7F7FD5;
-    background-color: #FF212121;
-}
 
 .chat {
     margin: 0px, 0px, 0px, 0px;

@@ -1,11 +1,11 @@
 ﻿function addMessage(messageContent, message) {
     var currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
-    var messageTime = new Date(message.timeStamp);
-    var currentDate = new Date();
+    var messageDate = new Date(message.timeStamp).getDate();
+    var currentDate = new Date().getDate();
     var messageHtml = '';
 
-    if (Math.abs(currentDate.getDate() - messageTime.getDate()) > 1) {
+    if (Math.abs(currentDate - messageDate) >= 1) {
         messageHtml = `<div class="msg_date">Cьогодні</div>`;
     }
 
@@ -89,18 +89,27 @@ function sendMessage() {
         success: function (data, textStatus, xhr) {
             if (xhr.status !== 204) {
                 addMessage(messageContent, data);
+                var element = document.querySelector('.msg_card_body');
+                element.scrollTop = element.scrollHeight;
             }
         }
     });
 }
 
-function selectChat(senderId, chatId) {
-    if (previousClickedBtn !== null) {
-        $(previousClickedBtn).removeClass('selected');
-    }
+var previousClickedBtn = null;
+var chatId;
 
-    $(this).addClass('selected');
-    previousClickedBtn = this;
+function selectChat(value) {
+    if (value !== chatId) {
+        chatId = value;
+
+        if (previousClickedBtn !== null) {
+            $(previousClickedBtn).removeClass('selected');
+        }
+
+        $(this).addClass('selected');
+        previousClickedBtn = this;
+    }
 
     $.ajax({
         url: '/Home/LoadChat',
@@ -122,7 +131,27 @@ function selectChat(senderId, chatId) {
                 updateChat(senderId, data);
                 $('#sendMessageForm').css('visibility', 'visible');
                 $('#card-header').css('visibility', 'visible');
+                var element = document.querySelector('.msg_card_body');
+                element.scrollTop = element.scrollHeight;
             }
+        }
+    });
+}
+
+function addChat() {
+    $.ajax({
+        url: '/Home/CreateChat',
+        method: 'POST',
+        data: {
+            senderId: senderId,
+        },
+        success: function (data) {
+            var html = $('#chat-list').html();
+            var messageHtml = `
+                <button value="${data.id}" class="chat_btn">${data.name}</button>
+            `;
+            var newMessageHtml = messageHtml + html;
+            $('#chat-list').html(newMessageHtml);
         }
     });
 }

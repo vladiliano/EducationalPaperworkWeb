@@ -23,7 +23,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             {
                 if (chat == null) throw new Exception("Не було надано об'єкт типу Chat.");
 
-                //chat.TimeStamp = DateTime.Now;
+                chat.TimeStamp = DateTime.Now;
 
                 await _repository.ChatRepository.CreateAsync(chat);
 

@@ -101,5 +101,21 @@ namespace EducationalPaperworkWeb.Views.Home
                 default: return Ok(messages.Data["prevMessage"]);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateChat(long senderId)
+        {
+            var chat = await _chatService.CreateChatAsync(new Chat
+            {
+                StudentId = senderId,
+                IsTaken = false,
+                Name = "Неприйнятий чат"
+            });
+
+            if(chat.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(CreateChat) + chat.Description);
+
+            return Ok(chat.Data);
+        }
     }
 }
