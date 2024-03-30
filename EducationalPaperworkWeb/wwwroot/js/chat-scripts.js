@@ -25,7 +25,10 @@
 
 function getMessageDate(messageTime) {
     var currentDate = new Date();
-    var diffDays = Math.abs(currentDate.getDate() - messageTime.getDate());
+    currentDate.setHours(0, 0, 0, 0);
+    messageTime.setHours(0, 0, 0, 0);
+    var diffTime = Math.abs(currentDate - messageTime);
+    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     var messageDate = "";
     if (diffDays === 0) {
@@ -44,7 +47,7 @@ function getMessageDate(messageTime) {
 }
 
 function updateChat(senderId, data) {
-    var previousDate = null;
+    var previousDate = new Date(2024, 2, 1);
     var messages = data.messages;
     var companion = data.companion;
     var messageHtml = '';
@@ -54,6 +57,7 @@ function updateChat(senderId, data) {
 
     messages.forEach(function (message) {
         var messageTime = new Date(message.timeStamp);
+        var messTime = messageTime.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
         var messageDate = getMessageDate(messageTime);
 
         if (messageDate !== previousDate) {
@@ -61,22 +65,25 @@ function updateChat(senderId, data) {
             previousDate = messageDate;
         }
 
-        var messageTime = messageTime.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-
         var messageHtml = `
         <div class="d-flex ${(message.senderId == senderId) ? "justify-content-end" : "justify-content-start"} mb-4">
             <div class="msg_container" id="mess">
                 ${message.content}
-                <span class="msg_time">${messageTime}</span>
+                <span class="msg_time">${messTime}</span>
             </div>
         </div>
     `;
-        if (messageHtmlTime !== null) {
-            messageHtml += messageHtmlTime;
-        }
 
-        $('.msg_card_body').append(messageHtml);
+        var result = '';
+
+        if (messageHtmlTime != null) {
+            result = messageHtmlTime;
+        }
+        result += messageHtml;
+
+        $('.msg_card_body').append(result);
         messageHtmlTime = null;
+        messageHtml = null;
     });
 }
 

@@ -89,13 +89,16 @@ html {
     }
 
 .type_msg {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    border: 0 !important;
     color: white !important;
     height: 50px !important;
     overflow-y: hidden;
     text-align: justify;
     line-height: 220%;
+    border-left: 0px;
+    border-right: 0px;
+    border-color: rgba(67, 67, 67, 1);
+    background-color: rgba(33, 33, 33, 1);
+    cursor: default;
 }
 
 
@@ -105,9 +108,24 @@ html {
     }
 
     .type_msg:focus {
-        box-shadow: none !important;
-        outline: 0px !important;
+        background-color: rgba(33, 33, 33, 1);
+        border-color: gray;
     }
+
+.type_msg_focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+    background-color: rgba(33, 33, 33, 1);
+    border-color: gray !important;
+}
+
+
+.attach_btn:hover,
+.send_btn:hover {
+    transition: border-color 0.3s ease;
+    color: white !important;
+}
+
 
 .attach_btn {
     border-bottom-left-radius: 10px !important;
@@ -121,19 +139,9 @@ html {
 
 .attach_btn,
 .send_btn {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    border: 0 !important;
-    color: white !important;
-    border-color: none !important;
-}
-
-.attach_btn,
-.send_btn,
-.create_chat_btn,
-.chat_btn {
-    cursor: default !important;
-    outline: none !important;
-    color: rgb(237, 237, 237);
+    transition: border-color 0.3s ease;
+    border-color: rgba(67, 67, 67, 1);
+    background-color: rgba(33, 33, 33, 1);
 }
 
     .attach_btn:focus,
@@ -152,6 +160,7 @@ html {
     font-weight: bold;
     margin: 10px 0 10px 5px;
     width: 97%;
+    color: whitesmoke !important;
 }
 
     .create_chat_btn:hover {
@@ -168,6 +177,7 @@ html {
     margin-left: 5px;
     padding-left: 15px;
     border-radius: 12px;
+    color: whitesmoke !important;
 }
 
     .chat_btn:hover {
@@ -283,6 +293,7 @@ html {
     right: 10px;
     font-size: 10px;
     color: rgba(0,0,0,0);
+    user-select: none;
 }
 
 .msg_cotainer_send {
