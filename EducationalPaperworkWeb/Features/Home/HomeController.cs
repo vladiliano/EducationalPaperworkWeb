@@ -103,13 +103,13 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateChat(long senderId)
+        public async Task<IActionResult> CreateChat(long senderId, string chatName)
         {
             var chat = await _chatService.CreateChatAsync(new Chat
             {
                 StudentId = senderId,
                 IsTaken = false,
-                Name = "Неприйнятий чат"
+                Name = chatName
             });
 
             if(chat.StatusCode != OperationStatusCode.OK)

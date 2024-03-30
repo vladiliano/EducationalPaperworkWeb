@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/chat-styles.css" />
+    <link rel="stylesheet" href="~/css/chat_styles.css" />
     <script src="~/js/chat-scripts.js"></script>
     <style>
         .col-left {
@@ -98,12 +98,36 @@
 
             $('.create_chat_btn').click(function (e) {
                 e.preventDefault();
-                addChat();
+                setModal();
+                removeChatFocus();
+                $('#myModal').css('display', 'block');
+                $('#textInput').focus();
+            });
+
+            $(document).on('keypress', '#textInput', function (e) {
+                if (e.keyCode == 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    processTextInput();
+                }
+            });
+
+            $(document).on('click', '.modal-button', function (e) {
+                e.preventDefault();
+                processTextInput();
+            });
+
+            $(document).on('click', '#close-modal', function (e) {
+                e.preventDefault();
+                $('#myModal').css('display', 'none');
+            });
+
+            $('#textInput').focus(function () {
+                $('#errorText').text('');
             });
 
             $(document).on('click', '.chat_btn', function (e) {
                 e.preventDefault();
-                selectChat($(this).val());
+                selectChat($(this));
             });
 
             $('#action_menu_btn').click(function () {

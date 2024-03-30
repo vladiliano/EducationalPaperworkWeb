@@ -44,17 +44,20 @@ function getMessageDate(messageTime) {
 }
 
 function updateChat(senderId, data) {
-    var newMessageHtml = '';
     var previousDate = null;
     var messages = data.messages;
     var companion = data.companion;
+    var messageHtml = '';
+    var messageHtmlTime = '';
+    $('#companion-name').text(companion);
+    $('.msg_card_body').html('');
 
     messages.forEach(function (message) {
         var messageTime = new Date(message.timeStamp);
         var messageDate = getMessageDate(messageTime);
 
         if (messageDate !== previousDate) {
-            newMessageHtml += `<div class="msg_date">${messageDate}</div>`;
+            messageHtmlTime = `<div class="msg_date">${messageDate}</div>`;
             previousDate = messageDate;
         }
 
@@ -68,11 +71,13 @@ function updateChat(senderId, data) {
             </div>
         </div>
     `;
-        newMessageHtml += messageHtml;
-    });
+        if (messageHtmlTime !== null) {
+            messageHtml += messageHtmlTime;
+        }
 
-    $('.msg_card_body').html(newMessageHtml);
-    $('#companion-name').text(companion);
+        $('.msg_card_body').append(messageHtml);
+        messageHtmlTime = null;
+    });
 }
 
 function sendMessage() {
@@ -99,7 +104,8 @@ function sendMessage() {
 var previousClickedBtn = null;
 var chatId;
 
-function selectChat(value) {
+function selectChat(window) {
+    var value = window.val();
     if (value !== chatId) {
         chatId = value;
 
@@ -107,43 +113,49 @@ function selectChat(value) {
             $(previousClickedBtn).removeClass('selected');
         }
 
-        $(this).addClass('selected');
-        previousClickedBtn = this;
-    }
+        $(window).addClass('selected');
+        previousClickedBtn = window;
 
-    $.ajax({
-        url: '/Home/LoadChat',
-        method: 'POST',
-        data: {
-            senderId: senderId,
-            chatId: chatId
-        },
-        success: function (data, textStatus, xhr) {
-            if (xhr.status === 204) {
-                $('#sendMessageForm').css('visibility', 'hidden');
-                $('#card-header').css('visibility', 'hidden');
-                var newMessageHtml = `
+        $.ajax({
+            url: '/Home/LoadChat',
+            method: 'POST',
+            data: {
+                senderId: senderId,
+                chatId: chatId
+            },
+            success: function (data, textStatus, xhr) {
+                if (xhr.status === 204) {
+                    $('#sendMessageForm').css('visibility', 'hidden');
+                    $('#card-header').css('visibility', 'hidden');
+                    var newMessageHtml = `
                     <div id="hello-world" class="hello-form" style="font-size: 15px; display: flex;">
                         Очікується підтвердження звернення від представника дирекції університету
                     </div>`;
-                $('.msg_card_body').html(newMessageHtml);
-            } else {
-                updateChat(senderId, data);
-                $('#sendMessageForm').css('visibility', 'visible');
-                $('#card-header').css('visibility', 'visible');
-                var element = document.querySelector('.msg_card_body');
-                element.scrollTop = element.scrollHeight;
+                    $('.msg_card_body').html(newMessageHtml);
+                } else {
+                    $('#sendMessageForm').css('visibility', 'visible');
+                    $('#card-header').css('visibility', 'visible');
+                    updateChat(senderId, data);
+                    var element = document.querySelector('.msg_card_body');
+                    element.scrollTop = element.scrollHeight;
+                }
             }
-        }
-    });
+        });
+    }
 }
 
-function addChat() {
+function removeChatFocus() {
+    $(previousClickedBtn).removeClass('selected');
+    previousClickedBtn = null;
+}
+
+function addChat(chatName) {
     $.ajax({
         url: '/Home/CreateChat',
         method: 'POST',
         data: {
             senderId: senderId,
+            chatName: chatName
         },
         success: function (data) {
             var html = $('#chat-list').html();
@@ -154,4 +166,31 @@ function addChat() {
             $('#chat-list').html(newMessageHtml);
         }
     });
+}
+
+function setModal() {
+    var html = `                    
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close">&times;</span>
+            <p class="modal-text">Вкажіть тему звернення</p>
+            <input type="text" id="textInput" class="modal-input" minlength="5" maxlength="25">
+            <span id="errorText" class="text-danger validation-message"></span>
+            <button id="sendButton" class="modal-button">Надіслати</button>
+        </div>
+    </div>
+    `;
+    $('#sendMessageForm').css('visibility', 'hidden');
+    $('#card-header').css('visibility', 'hidden');
+    $('.msg_card_body').html(html);
+}
+
+function processTextInput() {
+    var textInputValue = $('#textInput').val();
+    if (textInputValue.length < 5 || textInputValue.length > 25) {
+        $('#errorText').text('Тема звернення повина мати більше 5 символів.');
+        return;
+    }
+    addChat(textInputValue);
+    $('#myModal').css('display', 'none');
 }
