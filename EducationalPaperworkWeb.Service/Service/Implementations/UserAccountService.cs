@@ -47,7 +47,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                existUser.Password = PasswordHasher.HashPassword(user.Password);
+                existUser.Password = SecurityUtility.HashPassword(user.Email + user.Password);
                 await _repository.UserRepository.UpdateAsync(existUser);
 
                 return new BaseResponse<bool>()
@@ -85,7 +85,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                if (existUser.Password != PasswordHasher.HashPassword(user.Password))
+                if (existUser.Password != SecurityUtility.HashPassword(user.Email + user.Password))
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
@@ -131,7 +131,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                user.Password = PasswordHasher.HashPassword(user.Password);
+                user.Password = SecurityUtility.HashPassword(user.Email + user.Password);
 
                 await _repository.UserRepository.CreateAsync(user);
 

@@ -7,7 +7,7 @@ namespace EducationalPaperworkWeb.Service.Service.Interfaces
     public interface IChatService
     {
         public Task<IBaseResponse<Chat>> CreateChatAsync(Chat chat);
-        public Task<IBaseResponse<Dictionary<string, Message>>> CreateMessageAsync(long userId, long chatId, string message);
+        public Task<IBaseResponse<Queue<Message>>> CreateMessageAsync(long userId, long chatId, string message);
         public Task<IBaseResponse<List<Message>>> GetChatMessagesAsync(long id);
         public Task<IBaseResponse<List<Chat>>> GetUserChatsAsync(long userId);
         public Task<IBaseResponse<User>> GetCompanionAsync(long userId, long chatId);

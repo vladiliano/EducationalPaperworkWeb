@@ -26,7 +26,7 @@ namespace EducationalPaperworkWeb.Views.Home
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(string message)
         {
-            return View("Error", new ErrorViewModel
+            return View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 Message = message
@@ -98,13 +98,13 @@ namespace EducationalPaperworkWeb.Views.Home
             {
                 case OperationStatusCode.NoContent: return NoContent();
                 case OperationStatusCode.InternalServerError: return Error(nameof(SendMessage) + messages.Description);
-                default: return Ok(messages.Data["prevMessage"]);
+                default: return Ok(messages.Data.Dequeue());
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateChat(long senderId, string chatName)
-        {
+            {
             var chat = await _chatService.CreateChatAsync(new Chat
             {
                 StudentId = senderId,

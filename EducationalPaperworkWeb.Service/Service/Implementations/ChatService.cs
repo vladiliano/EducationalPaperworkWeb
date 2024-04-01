@@ -3,8 +3,11 @@ using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
+using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
+using System;
 
 namespace EducationalPaperworkWeb.Service.Service.Implementations
 {
@@ -24,12 +27,15 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 if (chat == null) throw new Exception("Не було надано об'єкт типу Chat.");
 
                 chat.TimeStamp = DateTime.Now;
+                chat.Name = SecurityUtility.EncodeMessage(chat.Name);
 
                 await _repository.ChatRepository.CreateAsync(chat);
 
                 var existingChat = _repository.ChatRepository.GetAll()
                     .OrderBy(x => x.TimeStamp)
                     .Last();
+
+                existingChat.Name = SecurityUtility.DecodeMessage(existingChat.Name);
 
                 if (existingChat == null) throw new Exception("При спробі отримати останній доданий чат сталася помилка!");
 
@@ -50,13 +56,13 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<Dictionary<string, Message>>> CreateMessageAsync(long userId, long chatId, string text)
+        public async Task<IBaseResponse<Queue<Message>>> CreateMessageAsync(long userId, long chatId, string text)
         {
             try
             {
                 if (text == null || text == string.Empty)
                 {
-                    return new BaseResponse<Dictionary<string, Message>>()
+                    return new BaseResponse<Queue<Message>>()
                     {
                         Description = "Повідомлення порожнє!",
                         StatusCode = OperationStatusCode.NoContent,
@@ -71,31 +77,29 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     ChatId = chatId,
                     SenderId = userId,
                     RecipientId = userId == chat.StudentId ? chat.AdminId : chat.StudentId,
-                    Content = text,
+                    Content = SecurityUtility.EncodeMessage(text),
                     TimeStamp = DateTime.Now
                 });
 
-                var messages = await _repository.MessageRepository.GetAll()
+                var mess = await _repository.MessageRepository.GetAll()
                     .Where(x => x.ChatId == chatId)
                     .OrderByDescending(x => x.TimeStamp)
                     .Take(2)
                     .ToListAsync();
 
-                var mess = new Dictionary<string, Message>();
-                    if(!mess.TryAdd("lastMessage", messages[0]) 
-                    || !mess.TryAdd("prevMessage", messages[1]))
-                    throw new Exception($"Не вдалося отримати остані два повідомлення чату з id {chatId}.");
+                mess.ForEach(x => { x.Content = SecurityUtility.DecodeMessage(x.Content); });
+                var messages = new Queue<Message>(mess);
 
-                return new BaseResponse<Dictionary<string, Message>>()
+                return new BaseResponse<Queue<Message>>()
                 {
                     Description = "Повідомлення було успішно завантажено!",
                     StatusCode = OperationStatusCode.OK,
-                    Data = mess
+                    Data = messages
                 };
             }
             catch (Exception ex)
             {
-                return new BaseResponse<Dictionary<string, Message>>()
+                return new BaseResponse<Queue<Message>>()
                 {
                     Description = nameof(CreateMessageAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
@@ -111,6 +115,8 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     .Where(x => x.ChatId == chatId)
                     .OrderBy(x => x.TimeStamp)
                     .ToListAsync();
+
+                messages.ForEach(x => { x.Content = SecurityUtility.DecodeMessage(x.Content); });
 
                 if (messages == null || messages.Count == 0)
                 {

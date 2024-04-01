@@ -3,7 +3,7 @@ using System.Text;
 
 namespace EducationalPaperworkWeb.Service.Service.Helpers.Hashing
 {
-    public static class PasswordHasher
+    public static class SecurityUtility
     {
         public static string HashPassword(string password)
         {
@@ -14,6 +14,17 @@ namespace EducationalPaperworkWeb.Service.Service.Helpers.Hashing
 
                 return hash;
             }
+        }
+        public static string EncodeMessage(string message)
+        {
+            var messageBytes = Encoding.UTF8.GetBytes(message);
+            return Convert.ToBase64String(messageBytes);
+        }
+
+        public static string DecodeMessage(string encodedMessage)
+        {
+            var messageBytes = Convert.FromBase64String(encodedMessage);
+            return Encoding.UTF8.GetString(messageBytes);
         }
     }
 }

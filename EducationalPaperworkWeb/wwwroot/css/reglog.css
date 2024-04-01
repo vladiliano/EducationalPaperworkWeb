@@ -21,6 +21,7 @@
     color: white;
     border-radius: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.75);
+    user-select: none;
     position: relative;
 }
 
@@ -63,6 +64,7 @@
     text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
     margin-right: 10px;
     margin-bottom: 30px;
+    user-select: none;
 }
 
 
@@ -74,6 +76,7 @@
     letter-spacing: 2px;
     padding-left: 10px;
     margin-bottom: 0px;
+    user-select: none;
 }
 
 /* Стили для ввода в блоке логина */
@@ -127,6 +130,7 @@
 
 /* Стили для блока пароля */
 .password {
+    user-select: none;
     position: relative;
     width: 100%;
 }
@@ -194,6 +198,7 @@
 
 /* Стили для контейнера ввода в блоке регистрации */
 .registration-input-container {
+    user-select: none;
     position: relative;
 }
 
@@ -254,4 +259,5 @@
     color: white;
     width: 100%;
     background: rgba(255, 255, 255, 0.3);
+    user-select: none;
 }
