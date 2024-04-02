@@ -6,8 +6,6 @@ using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
 using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
-using System;
 
 namespace EducationalPaperworkWeb.Service.Service.Implementations
 {
@@ -154,12 +152,15 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     .OrderByDescending(x => x.TimeStamp)
                     .ToListAsync();
 
+                chats.ForEach(x => { x.Name = SecurityUtility.DecodeMessage(x.Name); });
+
                 if (chats == null || chats.Count == 0)
 				{
-					return new BaseResponse<List<Chat>>()
-					{
-						StatusCode = OperationStatusCode.NoContent,
-						Description = "Чатів не знайдено!",
+                    return new BaseResponse<List<Chat>>()
+                    {
+                        StatusCode = OperationStatusCode.NoContent,
+                        Description = "Чатів не знайдено!",
+                        Data = new List<Chat>()
 					};
 				}
 

@@ -49,11 +49,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(result.Data));
 
-                        var userRoleClaim = result.Data.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultRoleClaimType)?.Value;
-
-                        return userRoleClaim == Role.Admin.ToString()
-                                ? RedirectToAction("AdminDashboard", "Home")
-                                : RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Home");
                 }
             }
             return View();
@@ -89,6 +85,12 @@ namespace EducationalPaperworkWeb.Features.UserAccount
                     return RedirectToAction(actionName: "SignIn", controllerName: "UserAccount");
             }
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LogOut()
+        {
+            return Ok();
         }
     }
 }

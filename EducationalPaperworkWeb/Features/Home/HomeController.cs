@@ -15,12 +15,14 @@ namespace EducationalPaperworkWeb.Views.Home
         private readonly ILogger<HomeController> _logger;
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
+        private readonly string _uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
 
         public HomeController(ILogger<HomeController> logger, IChatService chatService, IUserService userService)
         {
             _logger = logger;
             _chatService = chatService;
             _userService = userService;
+            Directory.CreateDirectory(_uploadDirectory);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -46,7 +48,7 @@ namespace EducationalPaperworkWeb.Views.Home
 
             if (userIdClaim != null)
             {
-                if (long.TryParse(userIdClaim, out long userId))
+                if (long.TryParse(userIdClaim, out var userId))
                 {
                     var chats = await _chatService.GetUserChatsAsync(userId);
 
@@ -86,13 +88,13 @@ namespace EducationalPaperworkWeb.Views.Home
             if (recepient.StatusCode == OperationStatusCode.InternalServerError)
                 return Error(nameof(LoadChat) + recepient.Description);
 
-            var dataToSend = new
+            var result = new
             {
                 Messages = messages.Data,
-                Companion = $"{recepient.Data.Surname} {recepient.Data.Name} {recepient.Data.Patronymic}"
+                Companion = $"{recepient.Data.Name} {recepient.Data.Patronymic} {recepient.Data.Surname}"
             };
 
-            return Ok(dataToSend);
+            return Ok(result);
         }
 
         [HttpPost]
@@ -100,12 +102,16 @@ namespace EducationalPaperworkWeb.Views.Home
         {
             var messages = await _chatService.CreateMessageAsync(senderId, chatId, mess);
 
-            switch (messages.StatusCode)
+            if (messages.StatusCode == OperationStatusCode.OK)
             {
-                case OperationStatusCode.NoContent: return NoContent();
-                case OperationStatusCode.InternalServerError: return Error(nameof(SendMessage) + messages.Description);
-                default: return Ok(messages.Data.Dequeue());
+                messages.Data.Dequeue();
+
+                if (messages.Data.TryDequeue(out var result)) 
+                    return Ok(result);
+
+                return NoContent();
             }
+            return Error(nameof(SendMessage) + messages.Description);
         }
 
         [HttpPost]
@@ -122,6 +128,31 @@ namespace EducationalPaperworkWeb.Views.Home
                 return Error(nameof(CreateChat) + chat.Description);
 
             return Ok(chat.Data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return Error(nameof(SendFile) + "Не вдалося отримати файл");
+
+            try
+            {
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+                var filePath = Path.Combine(_uploadDirectory, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Error(nameof(SendFile) + ex.Message);
+            }
         }
     }
 }
