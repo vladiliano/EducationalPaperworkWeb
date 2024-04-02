@@ -156,11 +156,8 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim("UserId", user.Id.ToString()),
-                new Claim("UserName", user.Name.ToString()),
-                new Claim("UserRole", user.Role.ToString())
-                //new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
-                //new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
             };
 
             return new ClaimsIdentity(claims, "ApplicationCookie");

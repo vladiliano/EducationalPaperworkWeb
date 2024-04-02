@@ -7,6 +7,6 @@ namespace EducationalPaperworkWeb.Service.Service.Interfaces
     public interface IUserService
     {
         public Task<IBaseResponse<User>> GetUserAsync(long id);
-        public IBaseResponse<long> GetUserId(HttpContext context);
+        public IBaseResponse<string> GetUserCookieField(HttpContext context, string value);
     }
 }

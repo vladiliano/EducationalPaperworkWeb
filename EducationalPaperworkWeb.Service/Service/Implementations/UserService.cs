@@ -47,25 +47,25 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 };
             }
         }
-        public IBaseResponse<long> GetUserId(HttpContext context)
+        public IBaseResponse<string> GetUserCookieField(HttpContext context, string value)
         {
             try
             {
-                if (!long.TryParse(context.User.FindFirst("UserId")?.Value, out long userId))
-                    throw new Exception("Помилка при спробі отримати Id користувача!");
+                var field = (context.User.FindFirst(value)?.Value)
+                    ?? throw new Exception($"Помилка при спробі отримати дані користувача з cookie за ключем {value}.");
 
-                return new BaseResponse<long>()
+                return new BaseResponse<string>()
                 {
-                    Description = "Id користувача успішно отримано!",
+                    Description = $"Дані користувача з cookie за ключем {value} успішно отримано!",
                     StatusCode = OperationStatusCode.OK,
-                    Data = userId
+                    Data = field
                 };
             }
             catch (Exception ex)
             {
-                return new BaseResponse<long>()
+                return new BaseResponse<string>()
                 {
-                    Description = nameof(GetUserId) + ": " + ex.Message,
+                    Description = nameof(GetUserCookieField) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
                 };
             }

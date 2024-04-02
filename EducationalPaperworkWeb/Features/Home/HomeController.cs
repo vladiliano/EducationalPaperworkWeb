@@ -34,24 +34,30 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpGet]
+        public IActionResult AdminDashboard() => View();
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("SignIn", "UserAccount");
 
-            var userId = _userService.GetUserId(HttpContext);
+            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
 
-            if (userId.StatusCode == OperationStatusCode.OK)
+            if (userIdClaim != null)
             {
-                var chats = await _chatService.GetUserChatsAsync(userId.Data);
-
-                if (chats.StatusCode != OperationStatusCode.InternalServerError)
+                if (long.TryParse(userIdClaim, out long userId))
                 {
-                    return View(new UserViewModel
+                    var chats = await _chatService.GetUserChatsAsync(userId);
+
+                    if (chats.StatusCode != OperationStatusCode.InternalServerError)
                     {
-                        UserId = userId.Data,
-                        Chats = chats.Data
-                    });
+                        return View(new UserViewModel
+                        {
+                            UserId = userId,
+                            Chats = chats.Data
+                        });
+                    }
                 }
             }
 

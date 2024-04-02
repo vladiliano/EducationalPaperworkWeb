@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using EducationalPaperworkWeb.Service.Service.Implementations;
+using EducationalPaperworkWeb.Domain.Domain.Enums;
 
 namespace EducationalPaperworkWeb.Features.UserAccount
 {
@@ -12,13 +14,11 @@ namespace EducationalPaperworkWeb.Features.UserAccount
     {
         private readonly ILogger<UserAccountController> _logger;
         private readonly IUserAccountService _service;
-        private readonly IChatService _chatService;
 
-        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService, IChatService chatService)
+        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService)
         {
             _logger = logger;
             _service = userAccountService;
-            _chatService = chatService;
         }
 
         [HttpGet]
@@ -47,9 +47,13 @@ namespace EducationalPaperworkWeb.Features.UserAccount
                         break;
                     default:
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                            new ClaimsPrincipal(result.Data));
+                        new ClaimsPrincipal(result.Data));
 
-                        return RedirectToAction("Index", "Home");
+                        var userRoleClaim = result.Data.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultRoleClaimType)?.Value;
+
+                        return userRoleClaim == Role.Admin.ToString()
+                                ? RedirectToAction("AdminDashboard", "Home")
+                                : RedirectToAction("Index", "Home");
                 }
             }
             return View();
