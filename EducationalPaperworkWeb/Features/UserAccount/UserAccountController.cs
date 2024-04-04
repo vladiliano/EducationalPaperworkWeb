@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using EducationalPaperworkWeb.Service.Service.Implementations;
-using EducationalPaperworkWeb.Domain.Domain.Enums;
 
 namespace EducationalPaperworkWeb.Features.UserAccount
 {

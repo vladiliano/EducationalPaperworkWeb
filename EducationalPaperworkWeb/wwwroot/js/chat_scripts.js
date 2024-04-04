@@ -236,17 +236,3 @@ function AddFile() {
         });
     });
 }
-
-function logOut() {
-    $.post({
-        url: '/UserAccount/LogOut',
-        success: function () {
-
-            console.log('Logout successful');
-        },
-        error: function (xhr, status, error) {
-
-            console.error('Error during logout:', error);
-        }
-    });
-}

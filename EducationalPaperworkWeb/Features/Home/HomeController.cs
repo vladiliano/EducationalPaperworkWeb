@@ -1,3 +1,4 @@
+using EducationalPaperworkWeb.Domain.Domain.Enums;
 using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
@@ -35,31 +36,43 @@ namespace EducationalPaperworkWeb.Views.Home
             });
         }
 
-        [HttpGet]
-        public IActionResult AdminDashboard() => View();
+        private long? GetUserId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimsIdentity.DefaultNameClaimType);
+            if (!string.IsNullOrEmpty(userIdClaim) && long.TryParse(userIdClaim, out long userId))
+                return userId;
+            return null;
+        }
+
+        private Role? GetUserRole()
+        {
+            var userRoleClaim = User.FindFirstValue(ClaimsIdentity.DefaultRoleClaimType);
+            if (!string.IsNullOrEmpty(userRoleClaim) && Enum.TryParse(userRoleClaim, out Role userRole))
+                return userRole;
+            return null;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (!HttpContext.User.Identity.IsAuthenticated)
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
                 return RedirectToAction("SignIn", "UserAccount");
 
-            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimsIdentity.DefaultNameClaimType)?.Value;
+            var userId = GetUserId();
+            var userRole = GetUserRole();
 
-            if (userIdClaim != null)
+            if (userId != null && userRole != null)
             {
-                if (long.TryParse(userIdClaim, out var userId))
-                {
-                    var chats = await _chatService.GetUserChatsAsync(userId);
+                var chats = await _chatService.GetUserChatsAsync(userId.Value);
 
-                    if (chats.StatusCode != OperationStatusCode.InternalServerError)
+                if (chats.StatusCode != OperationStatusCode.InternalServerError)
+                {
+                    return View(new UserViewModel
                     {
-                        return View(new UserViewModel
-                        {
-                            UserId = userId,
-                            Chats = chats.Data
-                        });
-                    }
+                        UserId = userId.Value,
+                        UserRole = userRole.Value,
+                        Chats = chats.Data
+                    });
                 }
             }
 
