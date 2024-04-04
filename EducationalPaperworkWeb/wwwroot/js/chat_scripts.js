@@ -163,6 +163,8 @@ function selectChat(window) {
 function removeChatFocus() {
     $(previousClickedBtn).removeClass('selected');
     previousClickedBtn = null;
+    $('#myModal').css('display', 'block');
+    $('#textInput').focus();
 }
 
 function addChat(chatName) {
@@ -180,6 +182,8 @@ function addChat(chatName) {
             `;
             var newMessageHtml = messageHtml + html;
             $('#chat-list').html(newMessageHtml);
+            var element = $('#chat-list').find('[value="' + data.id + '"]');
+            element.click();
         }
     });
 }
@@ -237,4 +241,14 @@ function AddFile() {
             }
         });
     });
+}
+
+function setHelloWorld() {
+    $('#myModal').css('display', 'none');
+    var html = `
+        <div class="hello-form">
+            Оберіть чат або надішліть звернення для його створення
+        </div>
+    `;
+    $('.msg_card_body').html(html);
 }

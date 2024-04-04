@@ -151,14 +151,14 @@ html {
     align-content: center;
 }
 
-    .chat-card-header,
-    .chat-card-footer{
-        height: 70px !important;
-    }
+.chat-card-header,
+.chat-card-footer {
+    height: 70px !important;
+}
 
-    .chat-card-body {
-        height: inherit;
-    }
+.chat-card-body {
+    height: inherit;
+}
 
 
 .chat-card-header,
@@ -184,7 +184,6 @@ html {
 .logout_btn {
     font-size: .875rem;
     text-align: left;
-    padding-left: 15px;
 }
 
 .create_chat_btn,
@@ -192,15 +191,17 @@ html {
     height: 40px;
 }
 
-    .create_chat_btn,
-    .logout_btn,
-    .chat_btn{
-        background-color: rgba(23,23,23,1);
-        border-radius: 6px;
-        color: whitesmoke !important;
-        border: none !important;
-        width: 100%;
-    }
+.create_chat_btn,
+.logout_btn,
+.chat_btn {
+    background-color: rgba(23,23,23,1);
+    padding: 1px 6px 1px 15px;
+    border-radius: 6px;
+    color: whitesmoke !important;
+    border: none !important;
+    text-align: left;
+    width: 100%;
+}
 
     .create_chat_btn:hover,
     .chat_btn:hover,
@@ -468,6 +469,8 @@ html {
     user-select: none;
     margin: auto;
     padding: 0 10px 0 10px;
+    font-size: 15px;
+    display: flex;
 }
 
 .row {
@@ -476,7 +479,7 @@ html {
 
 
 .modal {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.1);
     position: absolute;
     text-align: center;
     align-content: center;
@@ -549,7 +552,8 @@ html {
     user-select: none;
 }
 
-.material-icons {
+.material-icons,
+.material-symbols-outlined {
     padding-right: 5px;
     font-size: 20px;
     vertical-align: bottom;
