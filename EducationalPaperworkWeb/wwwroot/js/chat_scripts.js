@@ -152,6 +152,8 @@ function selectChat(window) {
                     updateChat(senderId, data);
                     var element = document.querySelector('.msg_card_body');
                     element.scrollTop = element.scrollHeight;
+                    var messContainer = document.querySelector('#inputMessage');
+                    messContainer.focus();
                 }
             }
         });
