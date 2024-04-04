@@ -156,8 +156,8 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
+                new(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
+                new(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
             };
 
             return new ClaimsIdentity(claims, "ApplicationCookie");

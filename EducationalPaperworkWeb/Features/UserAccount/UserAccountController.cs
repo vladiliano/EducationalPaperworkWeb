@@ -88,9 +88,11 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut()
         {
-            return Ok();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("SignIn");
         }
     }
 }

@@ -91,7 +91,7 @@ function sendMessage() {
         url: '/Home/SendMessage',
         method: 'POST',
         data: {
-            senderId: senderId,
+            userId: senderId,
             chatId: chatId,
             mess: messageContent
         },
@@ -134,7 +134,7 @@ function selectChat(window) {
             url: '/Home/LoadChat',
             method: 'POST',
             data: {
-                senderId: senderId,
+                userId: senderId,
                 chatId: chatId
             },
             success: function (data, textStatus, xhr) {
@@ -168,7 +168,7 @@ function addChat(chatName) {
         url: '/Home/CreateChat',
         method: 'POST',
         data: {
-            senderId: senderId,
+            userId: senderId,
             chatName: chatName
         },
         success: function (data) {
@@ -234,5 +234,19 @@ function AddFile() {
                 }
             }
         });
+    });
+}
+
+function logOut() {
+    $.post({
+        url: '/UserAccount/LogOut',
+        success: function () {
+
+            console.log('Logout successful');
+        },
+        error: function (xhr, status, error) {
+
+            console.error('Error during logout:', error);
+        }
     });
 }

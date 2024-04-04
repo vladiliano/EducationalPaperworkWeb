@@ -67,9 +67,9 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoadChat(long senderId, long chatId)
+        public async Task<IActionResult> LoadChat(long userId, long chatId)
         {
-            var chats = await _chatService.GetUserChatsAsync(senderId);
+            var chats = await _chatService.GetUserChatsAsync(userId);
 
             if (chats.StatusCode != OperationStatusCode.OK)
                 return Error(nameof(LoadChat) + chats.Description);
@@ -83,7 +83,7 @@ namespace EducationalPaperworkWeb.Views.Home
             if (messages.StatusCode == OperationStatusCode.InternalServerError)
                 return Error(nameof(LoadChat) + messages.Description);
 
-            var recepient = await _chatService.GetCompanionAsync(senderId, chatId);
+            var recepient = await _chatService.GetCompanionAsync(userId, chatId);
 
             if (recepient.StatusCode == OperationStatusCode.InternalServerError)
                 return Error(nameof(LoadChat) + recepient.Description);
@@ -98,9 +98,9 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage(long senderId, long chatId, string mess)
+        public async Task<IActionResult> SendMessage(long userId, long chatId, string mess)
         {
-            var messages = await _chatService.CreateMessageAsync(senderId, chatId, mess);
+            var messages = await _chatService.CreateMessageAsync(userId, chatId, mess);
 
             if (messages.StatusCode == OperationStatusCode.OK)
             {
@@ -115,11 +115,11 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateChat(long senderId, string chatName)
-            {
+        public async Task<IActionResult> CreateChat(long userId, string chatName)
+        {
             var chat = await _chatService.CreateChatAsync(new Chat
             {
-                StudentId = senderId,
+                StudentId = userId,
                 IsTaken = false,
                 Name = chatName
             });

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="~/css/chatStyles.css" />
     <script src="~/js/chat_scripts.js"></script>
     <style>
@@ -30,7 +31,7 @@
                         <button class="create_chat_btn"><i class="material-icons">add_box</i>Створити звернення</button>
                     </div>
                     <div class="chat-card-body contacts_body">
-                        <form asp-controller="Home" method="post" id="chat-list">
+                        <form id="chat-list">
                             @foreach (var chat in Model.Chats)
                             {
                                 <button value="@chat.Id" class="chat_btn">@chat.Name</button>
@@ -38,10 +39,13 @@
                         </form>
                     </div>
                     <div class="chat-card-footer">
-                        <button asp-controller="UserAccount" asp-action="LogOut" method="post" class="logout_btn">
-                            <i class="material-icons">exit_to_app</i>
-                            Log out
-                        </button>
+                        <form asp-controller="UserAccount" asp-action="LogOut" method="post">
+                            @Html.AntiForgeryToken()
+                            <button class="logout_btn" type="submit">
+                                <i class="material-icons">exit_to_app</i>
+                                Log out
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -151,9 +155,12 @@
 
             $('.attach_btn').click(function (e) {
                 e.preventDefault();
-
                 AddFile();
             });
+
+            // $('.logout_btn').click(function () {
+            //     logOut();
+            // });
         });
     </script>
 </body>
