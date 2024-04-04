@@ -1,6 +1,6 @@
 ﻿body,
 html {
-    min-width: 600px;
+    min-width: 800px;
     scrollbar-width: none;
     height: 100%;
     color: rgba(255,255,255,1);
@@ -174,28 +174,39 @@ html {
 
 .chat_btn {
     height: 35px !important;
+    overflow: hidden;
+    position: relative;
 }
 
 .create_chat_btn {
     font-weight: bold;
+    font-size: 15px;
 }
 
 .chat_btn,
 .logout_btn {
     font-size: .875rem;
     text-align: left;
+    padding: 1px 5px 1px 15px;
+    overflow: hidden;
 }
 
 .create_chat_btn,
 .logout_btn {
     height: 40px;
+    padding: 0 5px 0 8px;
 }
 
 .create_chat_btn,
 .logout_btn,
 .chat_btn {
+    overflow: hidden;
+    position: relative;
+    text-wrap: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     background-color: rgba(23,23,23,1);
-    padding: 1px 6px 1px 15px;
     border-radius: 6px;
     color: whitesmoke !important;
     border: none !important;
@@ -205,7 +216,8 @@ html {
 
     .create_chat_btn:hover,
     .chat_btn:hover,
-    .logout_btn:hover {
+    .logout_btn:hover,
+    .edit-square:hover {
         background-color: rgba(33,33,33,1) !important;
     }
 
@@ -552,9 +564,52 @@ html {
     user-select: none;
 }
 
-.material-icons,
-.material-symbols-outlined {
+.create_chat_btn .button-content,
+.chat_btn .button-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.create_chat_btn .material-icons {
+    font-size: 30px;
+    vertical-align: middle;
+    padding-right: 7px;
+}
+
+.create_chat_btn .button-text,
+.chat_btn .button-text{
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.create_chat_btn .edit-square {
+    color: white;
     padding-right: 5px;
-    font-size: 20px;
-    vertical-align: bottom;
+    border-radius: 5px;
+    font-size: 17px;
+    overflow: hidden;
+}
+
+.material-icons {
+    font-size: 30px;
+    vertical-align: middle;
+    padding-right: 7px;
+}
+
+.chat_btn .material-symbols-outlined {
+    color: white;
+    font-size: 17px;
+    overflow: hidden !important;
+    position: absolute;
+    right: 5px;
+    visibility: hidden;
+}
+
+.chat_btn:hover .material-symbols-outlined {
+    visibility: visible;
+    background-color: rgba(33,33,33,1) !important;
 }
