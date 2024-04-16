@@ -1,4 +1,5 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums.Chat;
+using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.ResponseEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
@@ -6,6 +7,7 @@ using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
 using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EducationalPaperworkWeb.Service.Service.Implementations
 {
@@ -54,13 +56,13 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<Queue<Message>>> CreateMessageAsync(long userId, long chatId, string text)
+        public async Task<IBaseResponse<Message>> CreateMessageAsync(long userId, long chatId, string text, MessageContentType messageType)
         {
             try
             {
                 if (text == null || text == string.Empty)
                 {
-                    return new BaseResponse<Queue<Message>>()
+                    return new BaseResponse<Message>()
                     {
                         Description = "Повідомлення порожнє!",
                         StatusCode = OperationStatusCode.NoContent,
@@ -75,29 +77,28 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     ChatId = chatId,
                     SenderId = userId,
                     RecipientId = userId == chat.StudentId ? chat.AdminId : chat.StudentId,
+                    Type = messageType,
                     Content = SecurityUtility.EncodeMessage(text),
                     TimeStamp = DateTime.Now
                 });
 
-                var mess = await _repository.MessageRepository.GetAll()
+                var message = await _repository.MessageRepository.GetAll()
                     .Where(x => x.ChatId == chatId)
                     .OrderByDescending(x => x.TimeStamp)
-                    .Take(2)
-                    .ToListAsync();
+                    .FirstOrDefaultAsync();
 
-                mess.ForEach(x => { x.Content = SecurityUtility.DecodeMessage(x.Content); });
-                var messages = new Queue<Message>(mess);
+                message.Content = SecurityUtility.DecodeMessage(message.Content);
 
-                return new BaseResponse<Queue<Message>>()
+                return new BaseResponse<Message>()
                 {
                     Description = "Повідомлення було успішно завантажено!",
                     StatusCode = OperationStatusCode.OK,
-                    Data = messages
+                    Data = message
                 };
             }
             catch (Exception ex)
             {
-                return new BaseResponse<Queue<Message>>()
+                return new BaseResponse<Message>()
                 {
                     Description = nameof(CreateMessageAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
@@ -206,6 +207,120 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 {
                     Description = nameof(GetCompanionAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError
+                };
+            }
+        }
+
+        public IBaseResponse<Message> GetPreviousMessage(long chatId, Message message)
+        {
+            try
+            {
+                var previousMessage = _repository.MessageRepository.GetAll()
+                    .Where(x => x.ChatId == chatId && x.TimeStamp < message.TimeStamp)
+                    .OrderByDescending(x => x.TimeStamp)
+                    .FirstOrDefault();
+
+                if (previousMessage == null)
+                {
+                    return new BaseResponse<Message>()
+                    {
+                        Description = "Повідомлення не знайдено!",
+                        StatusCode = OperationStatusCode.NoContent
+                    };
+                }
+
+                previousMessage.Content = SecurityUtility.DecodeMessage(previousMessage.Content);
+
+                return new BaseResponse<Message>()
+                {
+                    Description = "Повідомлення успішно знайдено!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = previousMessage
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Message>()
+                {
+                    Description = nameof(CreateMessageAsync) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
+                };
+            }
+        }
+
+        public async Task<IBaseResponse<List<Chat>>> GetUnselectedChats()
+        {
+            try
+            {
+                var chats = await _repository.ChatRepository.GetAll()
+                    .Where(x => x.IsTaken == false).ToListAsync();
+
+                chats.ForEach(x => { x.Name = SecurityUtility.DecodeMessage(x.Name); });
+
+                if (chats == null || chats.Count == 0)
+                {
+                    return new BaseResponse<List<Chat>>()
+                    {
+                        StatusCode = OperationStatusCode.NoContent,
+                        Description = "Чатів не знайдено!",
+                        Data = new List<Chat>()
+                    };
+                }
+
+                return new BaseResponse<List<Chat>>()
+                {
+                    Description = "Чат був успішно завантажений!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = chats
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Chat>>()
+                {
+                    Description = nameof(GetUserChatsAsync) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
+                };
+            }
+        }
+
+        public async Task<IBaseResponse<Chat>> AcceptRequest(long chatId, long adminId)
+        {
+            try
+            {
+                var chat = await _repository.ChatRepository.GetAll()
+                    .Where(x => x.IsTaken == false && x.Id == chatId)
+                    .FirstOrDefaultAsync();
+
+                if (chat == null)
+                {
+                    return new BaseResponse<Chat>()
+                    {
+                        StatusCode = OperationStatusCode.NoContent,
+                        Description = "Схоже виникла помилка! Цей запит вже в обробці!",
+                    };
+                }
+
+                chat.IsTaken = true;
+                chat.AdminId = adminId;
+
+                await _repository.ChatRepository.UpdateAsync(chat);
+
+                chat.Name = SecurityUtility.DecodeMessage(chat.Name);
+
+                return new BaseResponse<Chat>()
+                {
+                    Description = "Запит був успішно завантажений!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = chat
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Chat>()
+                {
+                    Description = nameof(GetUserChatsAsync) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
                 };
             }
         }

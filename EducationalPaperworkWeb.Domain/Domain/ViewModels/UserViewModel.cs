@@ -1,4 +1,4 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Enums;
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums.UserAccount;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 
 namespace EducationalPaperworkWeb.Domain.Domain.ViewModels

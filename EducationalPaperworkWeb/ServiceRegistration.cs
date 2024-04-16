@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using EducationalPaperworkWeb.Repository.Repository.Interfaces.UnitOfWork;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interface;
+using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.BlobStorage;
 
 namespace EducationalPaperworkWeb
 {
@@ -21,9 +23,12 @@ namespace EducationalPaperworkWeb
             services.AddAuthorization();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserAccountService, UserAccountService>();
+
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserAccountService, UserAccountService>();
+
+            services.AddSingleton<IDataStorage, BlobStorage>();
         }
 
         public static void RegisterDataBase(this IServiceCollection services, string connectionString)

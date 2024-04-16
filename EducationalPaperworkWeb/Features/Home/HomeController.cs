@@ -1,11 +1,14 @@
-using EducationalPaperworkWeb.Domain.Domain.Enums;
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums.Chat;
 using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
+using EducationalPaperworkWeb.Domain.Domain.Enums.UserAccount;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
+using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interface;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -16,14 +19,18 @@ namespace EducationalPaperworkWeb.Views.Home
         private readonly ILogger<HomeController> _logger;
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
-        private readonly string _uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "UploadedFiles");
+        private readonly IDataStorage _dataStorage;
 
-        public HomeController(ILogger<HomeController> logger, IChatService chatService, IUserService userService)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IChatService chatService, 
+            IUserService userService, 
+            IDataStorage dataStorage)
         {
             _logger = logger;
             _chatService = chatService;
             _userService = userService;
-            Directory.CreateDirectory(_uploadDirectory);
+            _dataStorage = dataStorage;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -111,23 +118,6 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage(long userId, long chatId, string mess)
-        {
-            var messages = await _chatService.CreateMessageAsync(userId, chatId, mess);
-
-            if (messages.StatusCode == OperationStatusCode.OK)
-            {
-                messages.Data.Dequeue();
-
-                if (messages.Data.TryDequeue(out var result)) 
-                    return Ok(result);
-
-                return NoContent();
-            }
-            return Error(nameof(SendMessage) + messages.Description);
-        }
-
-        [HttpPost]
         public async Task<IActionResult> CreateChat(long userId, string chatName)
         {
             var chat = await _chatService.CreateChatAsync(new Chat
@@ -144,28 +134,119 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendFile(IFormFile file)
+        public async Task<IActionResult> SendMessage(long userId, long chatId, string mess)
+        {
+            var message = await _chatService.CreateMessageAsync(userId, chatId, mess, MessageContentType.Text);
+
+            if (message.StatusCode == OperationStatusCode.OK)
+            {
+                var previousMessage = _chatService.GetPreviousMessage(chatId, message.Data);
+
+                if (previousMessage.StatusCode != OperationStatusCode.InternalServerError)
+                {
+                    var result = new
+                    {
+                        Content = message.Data.Content,
+                        TimeStamp = message.Data.TimeStamp,
+                        PreviousMessageTimeStamp = previousMessage.StatusCode == OperationStatusCode.NoContent
+                            ? DateTime.UtcNow.AddDays(-2)
+                            : previousMessage.Data.TimeStamp
+                    };
+                    return Ok(result);
+                }
+            }
+            return Error(nameof(SendMessage) + message.Description);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(long userId, long chatId, IFormFile file)
         {
             if (file == null || file.Length == 0)
-                return Error(nameof(SendFile) + "�� ������� �������� ����");
+                return Error(nameof(UploadFile) + "Файл не було передано або його розмір дорівнює нулю.");
 
-            try
+            var fileResult = await _dataStorage.UploadFileAsync(file);
+
+            if(fileResult.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(UploadFile) + fileResult.Description);
+
+            var message = await _chatService.CreateMessageAsync(userId, chatId, fileResult.Data, MessageContentType.File);
+
+            if (message.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(UploadFile) + message.Description);
+
+            var previousMessage = _chatService.GetPreviousMessage(chatId, message.Data);
+
+            if (previousMessage.StatusCode != OperationStatusCode.InternalServerError)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-                var filePath = Path.Combine(_uploadDirectory, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                var result = new
                 {
-                    await file.CopyToAsync(fileStream);
-                }
+                    Content = message.Data.Content,
+                    TimeStamp = message.Data.TimeStamp,
+                    PreviousMessageTimeStamp = previousMessage.StatusCode == OperationStatusCode.NoContent
+                        ? DateTime.UtcNow.AddDays(-2)
+                        : previousMessage.Data.TimeStamp
+                };
+                return Ok(result);
+            }
 
-                return Ok();
-            }
-            catch (Exception ex)
+            return Error(nameof(UploadFile) + previousMessage.Description);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            var file = await _dataStorage.GetFileAsync(fileName);
+
+            if (file.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(DownloadFile) + file.Description);
+
+            return File(file.Data.Content, file.Data.Mime, file.Data.Name);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUnacceptedRequests()
+        {
+            var chats = await _chatService.GetUnselectedChats();
+
+            if (chats.StatusCode == OperationStatusCode.InternalServerError)
+                return Error(nameof(GetUnacceptedRequests) + chats.Description);
+
+            if (chats.StatusCode == OperationStatusCode.NoContent)
+                return NoContent();
+
+            var usersWithChats = new List<Tuple<User,Chat>>(chats.Data.Count);
+
+            var tasks = chats.Data
+                .OrderBy(chat => chat.TimeStamp)
+                .Select(async chat =>
+                {
+                    var user = await _userService.GetUserAsync(chat.StudentId);
+                    return (user.StatusCode == OperationStatusCode.OK) 
+                    ? Tuple.Create(user.Data, chat) : null;
+                });
+
+            foreach (var task in tasks)
             {
-                return Error(nameof(SendFile) + ex.Message);
+                var result = await task;
+                if (result != null) usersWithChats.Add(result);
             }
+
+
+            return Ok(usersWithChats);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptRequest(long chatId, long adminId)
+        {
+            var chat = await _chatService.AcceptRequest(chatId, adminId);
+
+            if (chat.StatusCode == OperationStatusCode.InternalServerError)
+                return Error(nameof(AcceptRequest) + chat.Description);
+
+            if (chat.StatusCode == OperationStatusCode.NoContent)
+                return NoContent();
+
+            return Ok(chat.Data);
         }
     }
 }

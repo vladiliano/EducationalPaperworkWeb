@@ -1,4 +1,4 @@
-﻿using EducationalPaperworkWeb.Domain.Domain.Enums;
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums.UserAccount;
 using System.ComponentModel.DataAnnotations;
 
 namespace EducationalPaperworkWeb.Domain.Domain.Helpers.CustomAtributes

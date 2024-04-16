@@ -1,4 +1,4 @@
-﻿@using EducationalPaperworkWeb.Domain.Domain.Enums
+﻿@using EducationalPaperworkWeb.Domain.Domain.Enums.UserAccount
 @using EducationalPaperworkWeb.Domain.Domain.ViewModels
 @model UserViewModel
 
@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="~/css/chat.css" />
-    <script src="~/js/chat_scripts.js"></script>
+    <link rel="stylesheet" href="~/css/chat-styles.css" />
+    <script src="~/js/chat-scripts.js"></script>
     <style>
         .col-left {
             width: 17%;
@@ -151,6 +151,7 @@
                 e.preventDefault();
                 setModal();
                 removeChatFocus();
+                myModalOpen();
 
             });
 
@@ -195,6 +196,16 @@
             $('.attach_btn').click(function (e) {
                 e.preventDefault();
                 AddFile();
+            });
+
+            $(document).on('click', '#get-requests-btn', function (e) {
+                e.preventDefault();
+                setListRequests();
+            });
+
+            $(document).on('click', '.take_appeal_btn', function () {
+                var appealId = $(this).val();
+                handleTakeAppeal(appealId, senderId);
             });
         });
     </script>
