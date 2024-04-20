@@ -6,11 +6,12 @@ using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interface;
+using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Diagnostics;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EducationalPaperworkWeb.Views.Home
 {
@@ -20,17 +21,20 @@ namespace EducationalPaperworkWeb.Views.Home
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
         private readonly IDataStorage _dataStorage;
+        private readonly ChatHub _hubManager;
 
         public HomeController(
-            ILogger<HomeController> logger, 
+            ILogger<HomeController> logger,
             IChatService chatService, 
             IUserService userService, 
-            IDataStorage dataStorage)
+            IDataStorage dataStorage,
+            ChatHub hubContext)
         {
             _logger = logger;
             _chatService = chatService;
             _userService = userService;
             _dataStorage = dataStorage;
+            _hubManager = hubContext;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -87,7 +91,7 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoadChat(long userId, long chatId)
+        public async Task<IActionResult> LoadChat(long userId, long chatId, long previousChatId)
         {
             var chats = await _chatService.GetUserChatsAsync(userId);
 
@@ -144,15 +148,23 @@ namespace EducationalPaperworkWeb.Views.Home
 
                 if (previousMessage.StatusCode != OperationStatusCode.InternalServerError)
                 {
-                    var result = new
+                    var data = new
                     {
                         Content = message.Data.Content,
+                        SenderId = message.Data.SenderId,
+                        RecipientId = message.Data.RecipientId,
                         TimeStamp = message.Data.TimeStamp,
+                        IsFile = false,
+                        PreviousMessageExist = previousMessage.StatusCode != OperationStatusCode.NoContent,
                         PreviousMessageTimeStamp = previousMessage.StatusCode == OperationStatusCode.NoContent
                             ? DateTime.UtcNow.AddDays(-2)
                             : previousMessage.Data.TimeStamp
                     };
-                    return Ok(result);
+
+                    await _hubManager.SendMessageToChat(message.Data.SenderId, data);
+                    await _hubManager.SendMessageToChat(message.Data.RecipientId, data);
+
+                    return Ok();
                 }
             }
             return Error(nameof(SendMessage) + message.Description);
@@ -178,15 +190,23 @@ namespace EducationalPaperworkWeb.Views.Home
 
             if (previousMessage.StatusCode != OperationStatusCode.InternalServerError)
             {
-                var result = new
+                var data = new
                 {
                     Content = message.Data.Content,
+                    SenderId = message.Data.SenderId,
+                    RecipientId = message.Data.RecipientId,
                     TimeStamp = message.Data.TimeStamp,
+                    IsFile = true,
+                    PreviousMessageExist = previousMessage.StatusCode != OperationStatusCode.NoContent,
                     PreviousMessageTimeStamp = previousMessage.StatusCode == OperationStatusCode.NoContent
                         ? DateTime.UtcNow.AddDays(-2)
-                        : previousMessage.Data.TimeStamp
+                    : previousMessage.Data.TimeStamp
                 };
-                return Ok(result);
+
+                await _hubManager.SendMessageToChat(message.Data.SenderId, data);
+                await _hubManager.SendMessageToChat(message.Data.RecipientId, data);
+
+                return Ok();
             }
 
             return Error(nameof(UploadFile) + previousMessage.Description);

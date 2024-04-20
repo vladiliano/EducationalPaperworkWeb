@@ -1,6 +1,9 @@
+using Azure.Core;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.Conventions;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.ViewEngines;
-using System;
+using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace EducationalPaperworkWeb
 {
@@ -36,6 +39,8 @@ namespace EducationalPaperworkWeb
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=UserAccount}/{action=SignIn}/{id?}");
+
+            app.MapHub<ChatHub>("/Hubs/ChatHub");
 
             app.Run();
         }

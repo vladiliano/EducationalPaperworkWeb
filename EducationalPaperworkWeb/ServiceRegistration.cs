@@ -7,6 +7,7 @@ using EducationalPaperworkWeb.Infrastructure.Infrastructure.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interface;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.BlobStorage;
+using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
 
 namespace EducationalPaperworkWeb
 {
@@ -29,6 +30,14 @@ namespace EducationalPaperworkWeb
             services.AddScoped<IUserAccountService, UserAccountService>();
 
             services.AddSingleton<IDataStorage, BlobStorage>();
+
+            services.AddSignalR(hubOptions =>
+            {
+                hubOptions.EnableDetailedErrors = true;
+                hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(10);
+            });
+
+            services.AddSingleton<ChatHub>();
         }
 
         public static void RegisterDataBase(this IServiceCollection services, string connectionString)

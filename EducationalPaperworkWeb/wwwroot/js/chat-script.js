@@ -2,32 +2,6 @@
 var chatId;
 var table;
 
-function getTextMessage(content, time, sender) {
-    return `
-        <div class="d-flex ${sender} mb-4">
-            <div class="msg_container" id="mess">
-                ${content}
-                <span class="msg_time">${time}</span>
-            </div>
-        </div>
-    `;
-}
-
-function getFileMessage(content, time, sender) {
-    fileName = getFileName(content);
-    return `
-        <div class="d-flex ${sender} mb-4">
-            <div class="msg_container file_container" id="mess">
-                <span class="material-symbols-outlined file_icon">upload_file</span>
-                    <a id="file-link" class="file_name" href="#" data-content="${content}">
-                        ${fileName}
-                    </a>
-                <span class="msg_time">${time}</span>
-            </div>
-        </div>
-    `;
-}
-
 function getDateMessageHtml(text) {
     return `
         <div class="msg_date">
@@ -80,27 +54,6 @@ function getFileName(content) {
     return content.split('*')[1];
 }
 
-function createMessageHtml(content, isFile, isFirst) {
-    var currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-    var messageHtml = '';
-
-    if (isFirst) {
-        messageHtml += getDateMessageHtml("Сьогодні");
-    }
-
-    if (isFile) {
-        return messageHtml += getFileMessage(content, currentTime, "justify-content-end");
-    } else {
-        return messageHtml += getTextMessage(content, currentTime, "justify-content-end")
-    }
-}
-
-function addMessage(messageContent, isFile, isFirst) {
-    var messageHtml = createMessageHtml(messageContent, isFile, isFirst);
-    $('.msg_card_body').append(messageHtml);
-    $('#inputMessage').val('');
-}
-
 function getMessageDate(Time) {
     var messageDate = new Date(Time);
     var currentDate = new Date();
@@ -143,11 +96,7 @@ function updateChat(data) {
             previousDate = messageDate;
         }
 
-        if (message.senderId == senderId) {
-            sender = "justify-content-end"
-        } else {
-            sender = "justify-content-start"
-        }
+        sender = message.senderId == senderId ? "justify-content-end" : "justify-content-start";
 
         if (message.type === 1) {
             messageHtml = getTextMessage(message.content, messageTime, sender)
@@ -160,24 +109,6 @@ function updateChat(data) {
     });
 }
 
-function checkMessageConditions(xhr, data, isFile) {
-    var isToday = false;
-    if (xhr.status !== 204) {
-        var todayDate = new Date().getDate();
-        var mess = new Date(data.previousMessageTimeStamp);
-        var messDate = mess.getDate();
-        if (messDate !== todayDate) {
-            isToday = true;
-        }
-    }
-    else if (xhr.status === 204) {
-        isToday = true;
-    }
-    addMessage(data.content, isFile, isToday);
-    var element = document.querySelector('.msg_card_body');
-    element.scrollTop = element.scrollHeight;
-}
-
 function sendMessage() {
     var messageContent = $('#inputMessage').val();
 
@@ -188,9 +119,6 @@ function sendMessage() {
             userId: senderId,
             chatId: chatId,
             mess: messageContent
-        },
-        success: function (data, textStatus, xhr) {
-            checkMessageConditions(xhr, data, false);
         }
     });
 }
@@ -198,6 +126,7 @@ function sendMessage() {
 function selectChat(window) {
     var value = window.val();
     if (value !== chatId) {
+        var previousChatId = chatId;
         chatId = value;
 
         if (previousClickedBtn !== null) {
@@ -212,7 +141,8 @@ function selectChat(window) {
             method: 'POST',
             data: {
                 userId: senderId,
-                chatId: chatId
+                chatId: chatId,
+                previousChatId: previousChatId
             },
             success: function (data, textStatus, xhr) {
                 if (xhr.status === 204) {
@@ -300,10 +230,7 @@ function AddFile() {
             type: 'POST',
             processData: false,
             contentType: false,
-            data: formData,
-            success: function (data, textStatus, xhr) {
-                checkMessageConditions(xhr, data, true);
-            }
+            data: formData
         });
     });
 }
