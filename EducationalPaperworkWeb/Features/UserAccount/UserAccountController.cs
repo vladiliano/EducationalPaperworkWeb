@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
 
 namespace EducationalPaperworkWeb.Features.UserAccount
 {
@@ -12,11 +13,16 @@ namespace EducationalPaperworkWeb.Features.UserAccount
     {
         private readonly ILogger<UserAccountController> _logger;
         private readonly IUserAccountService _service;
+        private readonly ChatHub _hubManager;
 
-        public UserAccountController(ILogger<UserAccountController> logger, IUserAccountService userAccountService)
+        public UserAccountController(
+            ILogger<UserAccountController> logger, 
+            IUserAccountService userAccountService,
+            ChatHub hubManager)
         {
             _logger = logger;
             _service = userAccountService;
+            _hubManager = hubManager;
         }
 
         [HttpGet]
@@ -89,6 +95,7 @@ namespace EducationalPaperworkWeb.Features.UserAccount
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut()
         {
+            await _hubManager.OnDisconnectedAsync(new Exception("UserLoggedOut"));
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("SignIn");
         }

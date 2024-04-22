@@ -9,9 +9,9 @@ using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interfac
 using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EducationalPaperworkWeb.Views.Home
 {
@@ -150,10 +150,8 @@ namespace EducationalPaperworkWeb.Views.Home
                 {
                     var data = new
                     {
-                        Content = message.Data.Content,
-                        SenderId = message.Data.SenderId,
-                        RecipientId = message.Data.RecipientId,
-                        TimeStamp = message.Data.TimeStamp,
+                        ChatId = chatId,
+                        MessageData = message.Data,
                         IsFile = false,
                         PreviousMessageExist = previousMessage.StatusCode != OperationStatusCode.NoContent,
                         PreviousMessageTimeStamp = previousMessage.StatusCode == OperationStatusCode.NoContent
@@ -192,10 +190,8 @@ namespace EducationalPaperworkWeb.Views.Home
             {
                 var data = new
                 {
-                    Content = message.Data.Content,
-                    SenderId = message.Data.SenderId,
-                    RecipientId = message.Data.RecipientId,
-                    TimeStamp = message.Data.TimeStamp,
+                    ChatId = chatId,
+                    MessageData = message.Data,
                     IsFile = true,
                     PreviousMessageExist = previousMessage.StatusCode != OperationStatusCode.NoContent,
                     PreviousMessageTimeStamp = previousMessage.StatusCode == OperationStatusCode.NoContent

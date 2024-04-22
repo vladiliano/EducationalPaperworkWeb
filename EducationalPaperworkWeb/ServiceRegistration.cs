@@ -31,10 +31,11 @@ namespace EducationalPaperworkWeb
 
             services.AddSingleton<IDataStorage, BlobStorage>();
 
-            services.AddSignalR(hubOptions =>
+            services.AddSignalR()
+            .AddHubOptions<ChatHub>(options =>
             {
-                hubOptions.EnableDetailedErrors = true;
-                hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(10);
+                options.EnableDetailedErrors = false;
+                //options.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
             });
 
             services.AddSingleton<ChatHub>();

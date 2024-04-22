@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat</title>
+    <title>Chat</title>     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
@@ -14,9 +14,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/microsoft/signalr/dist/browser/signalr.min.js"></script>
-    <script src="~/js/chathub.js"></script>
-    <script src="~/js/chat-script.js"></script>
-    <script src="~/js/chat/appendMessageToChat.js"></script>
+    <script src="~/js/home/admin/request-table.js"></script>
+    <script src="~/js/home/chat/file-interaction.js"></script>
+    <script src="~/js/home/chat/append-message.js"></script>
+    <script src="~/js/home/chat/chat-interaction.js"></script>
+    <script src="~/js/home/chat/create-request.js"></script>
+    <script src="~/js/home/chat/request-window-handler.js"></script>
+    <script src="~/js/home/chat/templates.js"></script>
+    <script src="~/js/home/hub/hub-client.js"></script>
     <link rel="stylesheet" href="~/css/chat-styles.css" />
     <style>
         .col-left {
@@ -135,6 +140,7 @@
     </div>
     <script>
         var senderId = '@Model.UserId';
+        var selectedChatId;
 
         $(document).ready(function () {
             $('#inputMessage').on('keypress', function (e) {
@@ -173,7 +179,7 @@
 
             $(document).on('click', '#close-modal', function (e) {
                 e.preventDefault();
-                setHelloWorld();
+                setGreetings();
             });
 
             $('#textInput').focus(function () {
