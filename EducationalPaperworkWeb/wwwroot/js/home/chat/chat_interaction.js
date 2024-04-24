@@ -36,7 +36,6 @@ function selectChat(window) {
     var value = window.val();
 
     if (value !== selectedChatId) {
-        var previousChatId = selectedChatId;
         selectedChatId = value;
 
         if (previousClickedBtn !== null) {
@@ -46,18 +45,17 @@ function selectChat(window) {
         $(window).addClass('selected');
         previousClickedBtn = window;
 
-        getChatData(previousChatId);
+        getChatData();
     }
 }
 
-function getChatData(previousChatId) {
+function getChatData() {
     $.ajax({
-        url: '/Home/LoadChat',
+        url: '/Home/GetChat',
         method: 'POST',
         data: {
             userId: senderId,
-            chatId: selectedChatId,
-            previousChatId: previousChatId
+            chatId: selectedChatId
         },
         success: function (data, textStatus, xhr) {
             handleChatDataResponse(data, textStatus, xhr);

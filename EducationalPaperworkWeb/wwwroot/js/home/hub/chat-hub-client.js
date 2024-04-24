@@ -15,4 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
     hubConnection.on("SendMessageToChat", data => {
         appendMessageToChat(data);
     });
+
+    hubConnection.on("AddRequestToTable", data => {
+        addRowToTable(data);
+    });
+
+    hubConnection.on("RemoveRequestFromTable", chatId => {
+        removeRowFromTable(chatId);
+    });
 });

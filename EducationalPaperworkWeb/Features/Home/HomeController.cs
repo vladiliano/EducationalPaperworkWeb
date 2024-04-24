@@ -91,12 +91,12 @@ namespace EducationalPaperworkWeb.Views.Home
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoadChat(long userId, long chatId, long previousChatId)
+        public async Task<IActionResult> GetChat(long userId, long chatId)
         {
             var chats = await _chatService.GetUserChatsAsync(userId);
 
             if (chats.StatusCode != OperationStatusCode.OK)
-                return Error(nameof(LoadChat) + chats.Description);
+                return Error(nameof(GetChat) + chats.Description);
 
             var chat = chats.Data.FirstOrDefault(x => x.Id == chatId);
 
@@ -105,12 +105,12 @@ namespace EducationalPaperworkWeb.Views.Home
             var messages = await _chatService.GetChatMessagesAsync(chatId);
 
             if (messages.StatusCode == OperationStatusCode.InternalServerError)
-                return Error(nameof(LoadChat) + messages.Description);
+                return Error(nameof(GetChat) + messages.Description);
 
             var recepient = await _chatService.GetCompanionAsync(userId, chatId);
 
             if (recepient.StatusCode == OperationStatusCode.InternalServerError)
-                return Error(nameof(LoadChat) + recepient.Description);
+                return Error(nameof(GetChat) + recepient.Description);
 
             var result = new
             {
@@ -133,6 +133,13 @@ namespace EducationalPaperworkWeb.Views.Home
 
             if(chat.StatusCode != OperationStatusCode.OK)
                 return Error(nameof(CreateChat) + chat.Description);
+
+            var user = await _userService.GetUserAsync(chat.Data.StudentId);
+
+            if(user.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(CreateChat) + user.Description);
+
+            await _hubManager.AddRequestToTable(Tuple.Create(user.Data, chat.Data));
 
             return Ok(chat.Data);
         }
@@ -261,6 +268,8 @@ namespace EducationalPaperworkWeb.Views.Home
 
             if (chat.StatusCode == OperationStatusCode.NoContent)
                 return NoContent();
+
+            await _hubManager.RemoveRequestFromTable(chat.Data.Id);
 
             return Ok(chat.Data);
         }

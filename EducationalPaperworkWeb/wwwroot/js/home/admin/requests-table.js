@@ -11,6 +11,20 @@
     });
 }
 
+function handleTakeAppeal(appealId, adminId) {
+    $.ajax({
+        url: '/Home/AcceptRequest',
+        type: 'POST',
+        data: {
+            chatId: appealId,
+            adminId: adminId
+        },
+        success: function (data, textStatus, xhr) {
+            addChat(data);
+        }
+    });
+}
+
 function displayData(data) {
     if (data) {
         table = $('<table>').addClass('table requests_table');
@@ -67,24 +81,9 @@ function createTableRow(item) {
     return row;
 }
 
-function handleTakeAppeal(appealId, adminId) {
-    $.ajax({
-        url: '/Home/AcceptRequest',
-        type: 'POST',
-        data: {
-            chatId: appealId,
-            adminId: adminId
-        },
-        success: function (data, textStatus, xhr) {
-            removeRow(data);
-            addChat(data);
-        }
-    });
-}
-
-function removeRow(data) {
+function removeRowFromTable(chatId) {
     $('.take_appeal_btn').each(function () {
-        if ($(this).val() === data.id.toString()) {
+        if ($(this).val() === chatId.toString()) {
             var row = $(this).closest('tr');
             row.fadeOut('slow', function () {
                 $(this).next().fadeIn('slow');
@@ -106,4 +105,10 @@ function getFacultyString(facultyNumber) {
         case 7: return 'СГТ';
         default: return '';
     }
+}
+
+function addRowToTable(data) {
+    var tbody = $('<tbody>');
+    tbody.append(createTableRow(data));
+    table.append(tbody);
 }

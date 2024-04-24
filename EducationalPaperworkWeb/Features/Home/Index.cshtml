@@ -14,15 +14,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/microsoft/signalr/dist/browser/signalr.min.js"></script>
-    <script src="~/js/home/admin/request-table.js"></script>
+    <script src="~/js/home/admin/requests-table.js"></script>
     <script src="~/js/home/chat/file-interaction.js"></script>
     <script src="~/js/home/chat/append-message.js"></script>
-    <script src="~/js/home/chat/chat-interaction.js"></script>
+    <script src="~/js/home/chat/chat_interaction.js"></script>
     <script src="~/js/home/chat/create-request.js"></script>
     <script src="~/js/home/chat/request-window-handler.js"></script>
     <script src="~/js/home/chat/templates.js"></script>
-    <script src="~/js/home/hub/hub-client.js"></script>
-    <link rel="stylesheet" href="~/css/chat-styles.css" />
+    <script src="~/js/home/hub/chat-hub-client.js"></script>
+    <link rel="stylesheet" href="~/css/all-chat-styles.css" />
     <style>
         .col-left {
             width: 17%;
@@ -67,7 +67,7 @@
                         }
                     </div>
                     <div class="chat-card-body contacts_body">
-                        <form id="chat-list">
+                        <form id="chat-list" class="chat_list">
                             @foreach (var chat in Model.Chats)
                             {
                                 <button value="@chat.Id" class="chat_btn">
@@ -138,6 +138,7 @@
             </div>                    
         </div>
     </div>
+    <footer class="footer"></footer>
     <script>
         var senderId = '@Model.UserId';
         var selectedChatId;
