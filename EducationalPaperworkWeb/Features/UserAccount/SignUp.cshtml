@@ -15,7 +15,6 @@
     <title>Реєстрація</title>
     <link rel="stylesheet" href="~/css/reglog.css">
     <script src="~/js/login/password-visibility.js"></script>
-    <script src="~/js/login/group-input.js"></script>
 </head>
 <body>
 
@@ -26,7 +25,6 @@
 
             <div class="registration-columns">
                 <div class="registration-column">
-                    <!-- Левая часть формы -->
                     <div class="registration-input-container">
                         <label>Name</label>
                         <input asp-for="Name" maxlength="25" />
@@ -60,7 +58,6 @@
                 </div>
 
                 <div class="registration-column">
-                    <!-- Правая часть формы -->
                     <div class="registration-input-container">
                         <label>Group</label>
                         <input asp-for="Group" id="groupInput" maxlength="5" />
@@ -108,8 +105,3 @@
 
 </body>
 </html>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        initializeGroupInputValidation('groupInput');
-    });
-</script>

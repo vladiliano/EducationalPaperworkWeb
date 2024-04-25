@@ -69,8 +69,18 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                var chat = await _repository.ChatRepository.GetAll().FirstOrDefaultAsync(x => x.Id == chatId) 
+                var chat = await _repository.ChatRepository.GetAll()
+                    .FirstOrDefaultAsync(x => x.Id == chatId && x.State == ChatState.InProcessing) 
                     ?? throw new Exception($"Чату з id = {chatId} не знайдено!");
+
+                if (chat == null)
+                {
+                    return new BaseResponse<Message>()
+                    {
+                        Description = "Не було отриманно дані чату так як він знаходиться не в обробці!",
+                        StatusCode = OperationStatusCode.OK,
+                    };
+                }
 
                 await _repository.MessageRepository.CreateAsync(new Message()
                 {
@@ -248,12 +258,12 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<List<Chat>>> GetUnselectedChats()
+        public async Task<IBaseResponse<List<Chat>>> GetUnselectedChatsAsync()
         {
             try
             {
                 var chats = await _repository.ChatRepository.GetAll()
-                    .Where(x => x.IsTaken == false).ToListAsync();
+                    .Where(x => x.State == ChatState.WaitingForResponse).ToListAsync();
 
                 chats.ForEach(x => { x.Name = SecurityUtility.DecodeMessage(x.Name); });
 
@@ -284,12 +294,12 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
             }
         }
 
-        public async Task<IBaseResponse<Chat>> AcceptRequest(long chatId, long adminId)
+        public async Task<IBaseResponse<Chat>> AcceptRequestAsync(long chatId, long adminId)
         {
             try
             {
                 var chat = await _repository.ChatRepository.GetAll()
-                    .Where(x => x.IsTaken == false && x.Id == chatId)
+                    .Where(x => x.State == ChatState.WaitingForResponse && x.Id == chatId)
                     .FirstOrDefaultAsync();
 
                 if (chat == null)
@@ -301,7 +311,7 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                     };
                 }
 
-                chat.IsTaken = true;
+                chat.State = ChatState.InProcessing;
                 chat.AdminId = adminId;
 
                 await _repository.ChatRepository.UpdateAsync(chat);
@@ -320,6 +330,46 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations
                 return new BaseResponse<Chat>()
                 {
                     Description = nameof(GetUserChatsAsync) + ": " + ex.Message,
+                    StatusCode = OperationStatusCode.InternalServerError,
+                };
+            }
+        }
+
+        public async Task<IBaseResponse<Chat>> CloseRequestAsync(long chatId)
+        {
+            try
+            {
+                var chat = await _repository.ChatRepository.GetAll()
+                    .Where(x => x.State == ChatState.InProcessing && x.Id == chatId)
+                    .FirstOrDefaultAsync();
+
+                if (chat == null)
+                {
+                    return new BaseResponse<Chat>()
+                    {
+                        StatusCode = OperationStatusCode.NoContent,
+                        Description = "Схоже виникла помилка! Цей запит не в обробці!",
+                    };
+                }
+
+                chat.State = ChatState.Closed;
+
+                await _repository.ChatRepository.UpdateAsync(chat);
+
+                chat.Name = SecurityUtility.DecodeMessage(chat.Name);
+
+                return new BaseResponse<Chat>()
+                {
+                    Description = "Статус запиту був успішно змінений на \"Розглянуто\"!",
+                    StatusCode = OperationStatusCode.OK,
+                    Data = chat
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<Chat>()
+                {
+                    Description = nameof(CloseRequestAsync) + ": " + ex.Message,
                     StatusCode = OperationStatusCode.InternalServerError,
                 };
             }

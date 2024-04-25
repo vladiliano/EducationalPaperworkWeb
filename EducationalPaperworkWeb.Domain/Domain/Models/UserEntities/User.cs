@@ -28,7 +28,7 @@ namespace EducationalPaperworkWeb.Domain.Domain.Models.UserEntities
         [FacultyNotDefault(ErrorMessage = "Оберіть факультет!")]
         public Faculty Faculty { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
-        [RegularExpression(@"^\d{3}-[а-яА-Яa-zA-Z-]$", ErrorMessage = "Поле має містити (3 цифри)-(літера)")]
+        [StringLength(5, MinimumLength = 3, ErrorMessage = "Довжина поля має містити не менше трьох символів!")]
         public string Group { get; set; }
         [Required(ErrorMessage = "Пусте поле!")]
         [RegularExpression(@"[A-Za-zа-яА-Я0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", ErrorMessage = "Некоректна адреса пошти!")]

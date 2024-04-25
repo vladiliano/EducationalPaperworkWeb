@@ -64,5 +64,11 @@ namespace EducationalPaperworkWeb.Service.Service.Implementations.ChatHub
 
         public Task RemoveRequestFromTable(object data) =>
             Clients.Group("admins").SendAsync("RemoveRequestFromTable", data);
+
+        public Task UpdateStudentRequest(long userId, object chat) =>
+            Clients.Group(userId.ToString()).SendAsync("UpdateStudentRequest", chat);
+
+        public Task SetChatAsReadOnly(long userId) =>
+            Clients.Group(userId.ToString()).SendAsync("SetChatAsReadOnly");
     }
 }

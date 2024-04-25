@@ -9,7 +9,6 @@ using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interfac
 using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -40,6 +39,8 @@ namespace EducationalPaperworkWeb.Views.Home
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(string message)
         {
+            _logger.LogCritical(message);
+
             return View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
@@ -100,7 +101,7 @@ namespace EducationalPaperworkWeb.Views.Home
 
             var chat = chats.Data.FirstOrDefault(x => x.Id == chatId);
 
-            if (chat != null && !chat.IsTaken) return NoContent();
+            if (chat != null && chat.State == ChatState.WaitingForResponse) return NoContent();
 
             var messages = await _chatService.GetChatMessagesAsync(chatId);
 
@@ -114,6 +115,7 @@ namespace EducationalPaperworkWeb.Views.Home
 
             var result = new
             {
+                ChatState = chat.State,
                 Messages = messages.Data,
                 Companion = $"{recepient.Data.Name} {recepient.Data.Patronymic} {recepient.Data.Surname}"
             };
@@ -127,7 +129,7 @@ namespace EducationalPaperworkWeb.Views.Home
             var chat = await _chatService.CreateChatAsync(new Chat
             {
                 StudentId = userId,
-                IsTaken = false,
+                State = ChatState.WaitingForResponse,
                 Name = chatName
             });
 
@@ -229,13 +231,10 @@ namespace EducationalPaperworkWeb.Views.Home
         [HttpGet]
         public async Task<IActionResult> GetUnacceptedRequests()
         {
-            var chats = await _chatService.GetUnselectedChats();
+            var chats = await _chatService.GetUnselectedChatsAsync();
 
             if (chats.StatusCode == OperationStatusCode.InternalServerError)
                 return Error(nameof(GetUnacceptedRequests) + chats.Description);
-
-            if (chats.StatusCode == OperationStatusCode.NoContent)
-                return NoContent();
 
             var usersWithChats = new List<Tuple<User,Chat>>(chats.Data.Count);
 
@@ -261,7 +260,7 @@ namespace EducationalPaperworkWeb.Views.Home
         [HttpPost]
         public async Task<IActionResult> AcceptRequest(long chatId, long adminId)
         {
-            var chat = await _chatService.AcceptRequest(chatId, adminId);
+            var chat = await _chatService.AcceptRequestAsync(chatId, adminId);
 
             if (chat.StatusCode == OperationStatusCode.InternalServerError)
                 return Error(nameof(AcceptRequest) + chat.Description);
@@ -270,8 +269,23 @@ namespace EducationalPaperworkWeb.Views.Home
                 return NoContent();
 
             await _hubManager.RemoveRequestFromTable(chat.Data.Id);
+            await _hubManager.UpdateStudentRequest(chat.Data.StudentId, chat.Data);
 
             return Ok(chat.Data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CloseRequest(long chatId)
+        {
+            var chat = await _chatService.CloseRequestAsync(chatId);
+
+            if(chat.StatusCode != OperationStatusCode.OK)
+                return Error(nameof(AcceptRequest) + chat.Description);
+
+            await _hubManager.SetChatAsReadOnly(chat.Data.AdminId);
+            await _hubManager.SetChatAsReadOnly(chat.Data.StudentId);
+
+            return Ok();
         }
     }
 }

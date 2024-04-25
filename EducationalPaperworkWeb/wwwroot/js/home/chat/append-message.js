@@ -29,7 +29,7 @@ function createMessageHtml(data) {
     var messageHtml = '';
 
     if (todayLabel) {
-        messageHtml += getDateMessageHtml("Сьогодні");
+        messageHtml += getDateFormHtml("Сьогодні");
     }
 
     var messageLocation = data.messageData.senderId.toString() === senderId ? "justify-content-end" : "justify-content-start";
@@ -49,4 +49,5 @@ function addTodayLabel(data) {
         return messDate !== todayDate ? true : false;
         return false;
     }
+    return true;
 }

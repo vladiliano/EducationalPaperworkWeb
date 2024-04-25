@@ -20,7 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
         addRowToTable(data);
     });
 
-    hubConnection.on("RemoveRequestFromTable", chatId => {
-        removeRowFromTable(chatId);
+    hubConnection.on("RemoveRequestFromTable", data => {
+        removeRowFromTable(data);
+    });
+
+    hubConnection.on("UpdateStudentRequest", data => {
+        updateStudentRequest(data);
+    }); 
+
+    hubConnection.on("SetChatAsReadOnly", () => {
+        setChatAsReadOnly();
     });
 });

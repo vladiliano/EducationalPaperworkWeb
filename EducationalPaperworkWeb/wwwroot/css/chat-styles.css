@@ -32,7 +32,6 @@ html {
 
     .msg_card_body::-webkit-scrollbar {
         width: 8px;
-        
     }
 
     .msg_card_body::-webkit-scrollbar-track {
@@ -47,16 +46,14 @@ html {
 .card-header {
     border-bottom: 0 !important;
     background-color: rgba(0,0,0,0);
+    border-bottom: 1px solid gray !important;
+    height: 59px;
 }
 
 .card-footer {
     border-top: 0 !important;
     background-color: rgba(0,0,0,0);
     align-self: center;
-}
-
-.card-header,
-.card-footer {
     width: 70%;
 }
 
@@ -150,10 +147,14 @@ html {
 
 .chat-card-header {
     align-content: center;
+    border-bottom: 1px solid gray !important;
+    border-top-style: inset !important;
 }
 
 .chat-card-footer {
-    padding-top: 15px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid gray !important;
+    border-top-style: inset !important;
 }
 
 .chat-card-header,
@@ -173,9 +174,9 @@ html {
         width: 8px;
     }
 
-        .chat-card-body::-webkit-scrollbar-track {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
+    .chat-card-body::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
 
     .chat-card-body::-webkit-scrollbar-thumb {
         background-color: rgba(47, 47, 47, 1);
@@ -187,7 +188,7 @@ html {
 .chat-card-footer {
     padding: 0;
     margin: 0;
-    border-top: 0 !important;
+    border-top: 0;
     background-color: rgba(0,0,0,0);
     width: 90%;
     align-self: center;
@@ -343,23 +344,19 @@ html {
     max-width: 70%;
     border-radius: 12px;
     border: 0 !important;
+    background-color: rgba(66,66,66,0.2);
 }
 
     .msg_container:hover {
-        background-color: rgba(40,40,40,1);
+        background-color: rgba(66,66,66,0.4);
     }
-
-        .msg_container:hover .msg_time {
-            color: rgba(99, 99, 99, 1);
-        }
-
 
 .msg_time {
     position: absolute;
     bottom: 1px;
     right: 10px;
     font-size: 10px;
-    color: rgba(0,0,0,0);
+    color: rgb(99,99,99);
     user-select: none;
 }
 
@@ -485,7 +482,7 @@ html {
     min-width: 80px;
     border-radius: 12px;
     border: 0;
-    background-color: rgba(40, 40, 40, 1);
+    background-color: rgba(66, 66, 66, 0.5);
     padding: 2px 0 2px 0;
     font-size: 12px;
     user-select: none;
@@ -688,8 +685,41 @@ html {
 .chat_list {
     position: absolute;
     width: -webkit-fill-available !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .footer {
     border-top: 0px !important;
+}
+
+.close_request_btn {
+    color: rgba(99,99,99,1);
+    font-size: 14px !important;
+    background-color: transparent;
+    cursor: default;
+    border: 0;
+    overflow: hidden;
+}
+
+    .close_request_btn:hover {
+        color: rgba(199,199,199,1);
+    }
+
+.d-flex.bd-highlight {
+    display: flex;
+    justify-content: space-between;
+}
+
+.user_icon {
+    font-size: 30px !important;
+    vertical-align: bottom;
+    padding-right: 7px;
+}
+
+.closed_chat_message {
+    align-self: center;
+    height: 30px !important;
+    font-size: 14px !important;
+    align-content: center;
 }

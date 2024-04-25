@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interface;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.BlobStorage;
 using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EducationalPaperworkWeb
 {
@@ -45,7 +46,7 @@ namespace EducationalPaperworkWeb
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("EducationalPaperworkWeb"));
             });
         }
     }

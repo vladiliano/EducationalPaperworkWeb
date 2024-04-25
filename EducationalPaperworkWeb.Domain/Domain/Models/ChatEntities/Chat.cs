@@ -1,4 +1,6 @@
-﻿namespace EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities
+﻿using EducationalPaperworkWeb.Domain.Domain.Enums.Chat;
+
+namespace EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities
 {
     public class Chat
     {
@@ -7,6 +9,6 @@
         public long StudentId { get; set; }
         public long AdminId { get; set; }
         public DateTime TimeStamp { get; set; }
-        public bool IsTaken { get; set; }
+        public ChatState State { get; set; }
     }
 }

@@ -15,14 +15,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/home/admin/requests-table.js"></script>
+    <script src="~/js/home/admin/close_request.js"></script>
     <script src="~/js/home/chat/file-interaction.js"></script>
     <script src="~/js/home/chat/append-message.js"></script>
-    <script src="~/js/home/chat/chat_interaction.js"></script>
+    <script src="~/js/home/chat/chat-interaction.js"></script>
     <script src="~/js/home/chat/create-request.js"></script>
     <script src="~/js/home/chat/request-window-handler.js"></script>
     <script src="~/js/home/chat/templates.js"></script>
-    <script src="~/js/home/hub/chat-hub-client.js"></script>
-    <link rel="stylesheet" href="~/css/all-chat-styles.css" />
+    <script src="~/js/home/hub/chat-hub.js"></script>
+    <link rel="stylesheet" href="~/css/chat-styles.css" />
     <style>
         .col-left {
             width: 17%;
@@ -97,17 +98,15 @@
                     <div id="card-header" class="card-header msg_head" style="visibility: hidden">
                         <div class="d-flex bd-highlight">
                             <div class="user_info">
+                                <span class="material-symbols-outlined user_icon">
+                                    person
+                                </span>
                                 <span id="companion-name"></span>
-                                <span id="action_menu_btn" class="toggle_menu"><i class="fas fa-angle-down"></i></span>
-                                <div class="action_menu">
-                                    <ul>
-                                        <li><i class="fas fa-user-circle"></i> View profile</li>
-                                        <li><i class="fas fa-users"></i> Add to close friends</li>
-                                        <li><i class="fas fa-plus"></i> Add to group</li>
-                                        <li><i class="fas fa-ban"></i> Block</li>
-                                    </ul>
-                                </div>
                             </div>
+                            @if (Model.UserRole == Role.Admin)
+                            {
+                                <button id="close-request-btn" class="close_request_btn">Закрити звернення</button>
+                            }
                         </div>
                     </div>
                     <div class="card-body msg_card_body">
@@ -121,7 +120,7 @@
                             </div>
                         }
                     </div>
-                    <div class="card-footer">
+                    <div id="chat-card-footer" class="card-footer">
                         <form id="sendMessageForm" style="visibility: hidden">
                             <div class="input-group">
                                 <div class="input-group-append">
@@ -144,6 +143,12 @@
         var selectedChatId;
 
         $(document).ready(function () {
+            $('#sendMessageForm').after(`
+                    <div id="closed-chat-message" class="closed_chat_message msg_date" style="visibility: hidden;     margin-top: -30px;">
+                Це звернення було закрито представником дирекції університету
+            </div>
+            `);
+
             $('#inputMessage').on('keypress', function (e) {
                 if (e.keyCode == 13 && !e.shiftKey) {
                     e.preventDefault();
@@ -217,6 +222,11 @@
             $(document).on('click', '.take_appeal_btn', function () {
                 var appealId = $(this).val();
                 handleTakeAppeal(appealId, senderId);
+            });
+
+            $(document).on('click', '#close-request-btn', function (e) {
+                e.preventDefault();
+                closeRequest();
             });
         });
     </script>

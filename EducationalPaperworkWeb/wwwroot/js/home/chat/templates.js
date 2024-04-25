@@ -65,12 +65,36 @@ function getFileMessageHtml(content, time, messageLocation) {
     `;
 }
 
-function hideMessageForm() {
-    $('#sendMessageForm').css('visibility', 'hidden');
+function setClosedRequestMessage() {
+    hideChatFooter();
+    showChatHeader();
+
+    $('#closed-chat-message').css('visibility', 'visible');
+}
+
+function hideChatHeader() {
     $('#card-header').css('visibility', 'hidden');
 }
 
-function showMessageForm() {
-    $('#sendMessageForm').css('visibility', 'visible');
+function hideChatFooter() {
+    $('#sendMessageForm').css('visibility', 'hidden');
+}
+
+function showChatHeader() {
     $('#card-header').css('visibility', 'visible');
+}
+
+function showChatFooter() {
+    $('#sendMessageForm').css('visibility', 'visible');
+}
+
+
+function hideMessageForm() {
+    hideChatHeader();
+    hideChatFooter();
+}
+
+function showMessageForm() {
+    showChatHeader();
+    showChatFooter();
 }

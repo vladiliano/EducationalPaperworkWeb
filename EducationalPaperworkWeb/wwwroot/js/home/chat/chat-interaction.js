@@ -1,38 +1,4 @@
-﻿function updateChat(data) {
-    var previousDate = new Date(2024, 2, 1);
-    var messages = data.messages;
-    var companion = data.companion;
-    var messageHtmlTime = '';
-    var messageHtml = '';
-    var sender = '';
-    $('#companion-name').text(companion);
-    $('.msg_card_body').html('');
-
-    messages.forEach(function (message) {
-        var messageDate = getMessageDate(message.timeStamp);
-        var time = new Date(message.timeStamp);
-        var messageTime = time.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-
-        if (messageDate !== previousDate) {
-            messageHtmlTime = getDateFormHtml(messageDate);
-            $('.msg_card_body').append(messageHtmlTime);
-            previousDate = messageDate;
-        }
-
-        sender = message.senderId == senderId ? "justify-content-end" : "justify-content-start";
-
-        if (message.type === 1) {
-            messageHtml = getTextMessageHtml(message.content, messageTime, sender)
-        }
-        else if (message.type === 2) {
-            messageHtml = getFileMessageHtml(message.content, messageTime, sender);
-        }
-
-        $('.msg_card_body').append(messageHtml);
-    });
-}
-
-function selectChat(window) {
+﻿function selectChat(window) {
     var value = window.val();
 
     if (value !== selectedChatId) {
@@ -69,13 +35,56 @@ function handleChatDataResponse(data, textStatus, xhr) {
         var newMessageHtml = getWaitFormHtml();
         $('.msg_card_body').html(newMessageHtml);
     } else {
-        showMessageForm();
+        if (data.chatState === 1) {
+            showMessageForm();
+        }
+        else if (data.chatState === 2) {
+            setChatAsReadOnly();
+        }
+
         updateChat(data);
         var element = document.querySelector('.msg_card_body');
         element.scrollTop = element.scrollHeight;
-        var messContainer = document.querySelector('#inputMessage');
-        messContainer.focus();
+
+        if (data.chatState === 1) {
+            var messContainer = document.querySelector('#inputMessage');
+            messContainer.focus();
+        }
     }
+}
+
+function updateChat(data) {
+    var previousDate = new Date(2024, 2, 1);
+    var messages = data.messages;
+    var companion = data.companion;
+    var messageHtmlTime = '';
+    var messageHtml = '';
+    var sender = '';
+    $('#companion-name').text(companion);
+    $('.msg_card_body').html('');
+
+    messages.forEach(function (message) {
+        var messageDate = getMessageDate(message.timeStamp);
+        var time = new Date(message.timeStamp);
+        var messageTime = time.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+
+        if (messageDate !== previousDate) {
+            messageHtmlTime = getDateFormHtml(messageDate);
+            $('.msg_card_body').append(messageHtmlTime);
+            previousDate = messageDate;
+        }
+
+        sender = message.senderId == senderId ? "justify-content-end" : "justify-content-start";
+
+        if (message.type === 1) {
+            messageHtml = getTextMessageHtml(message.content, messageTime, sender)
+        }
+        else if (message.type === 2) {
+            messageHtml = getFileMessageHtml(message.content, messageTime, sender);
+        }
+
+        $('.msg_card_body').append(messageHtml);
+    });
 }
 
 function getMessageDate(Time) {
@@ -108,4 +117,14 @@ function setGreetings() {
     $('#myModal').css('display', 'none');
     var html = getClientGreetingsFormHtml();
     $('.msg_card_body').html(html);
+}
+
+function updateStudentRequest(chat) {
+    if (selectedChatId === chat.id.toString()) {
+        getChatData();
+    }
+}
+
+function setChatAsReadOnly() {
+    setClosedRequestMessage();
 }

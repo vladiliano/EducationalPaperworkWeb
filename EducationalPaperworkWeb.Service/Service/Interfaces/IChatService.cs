@@ -13,7 +13,8 @@ namespace EducationalPaperworkWeb.Service.Service.Interfaces
         public Task<IBaseResponse<List<Chat>>> GetUserChatsAsync(long userId);
         public Task<IBaseResponse<User>> GetCompanionAsync(long userId, long chatId);
         public IBaseResponse<Message> GetPreviousMessage(long chatId, Message message);
-        public Task<IBaseResponse<List<Chat>>> GetUnselectedChats();
-        public Task<IBaseResponse<Chat>> AcceptRequest(long chatId, long adminId);
+        public Task<IBaseResponse<List<Chat>>> GetUnselectedChatsAsync();
+        public Task<IBaseResponse<Chat>> AcceptRequestAsync(long chatId, long adminId);
+        public Task<IBaseResponse<Chat>> CloseRequestAsync(long chatId);
     }
 }
