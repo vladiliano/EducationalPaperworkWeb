@@ -34,23 +34,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 processData: false,
                 contentType: false,
                 data: formData,
+                xhrFields: {
+                    responseType: 'blob'
+                },
                 success: function (data, textStatus, xhr) {
-                    var disposition = xhr.getResponseHeader('Content-Disposition');
-                    var startIndex = disposition.indexOf("filename*=UTF-8''") + "filename*=UTF-8''".length;
-                    var encodedSubstring = disposition.substring(startIndex);
-                    var filename = decodeURIComponent(encodedSubstring);
-                    var contentType = xhr.getResponseHeader('Content-Type');
-
-                    var blob = new Blob([data], { type: contentType });
-
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = filename;
-
-                    document.body.appendChild(link);
-                    link.click();
-
-                    document.body.removeChild(link);
+                    var url = window.URL.createObjectURL(data);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    const fileName = contentValue.split('*')[1];
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
                 }
             });
         }

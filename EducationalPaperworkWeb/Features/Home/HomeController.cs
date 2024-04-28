@@ -2,6 +2,7 @@
 using EducationalPaperworkWeb.Domain.Domain.Enums.In_Program_Enums;
 using EducationalPaperworkWeb.Domain.Domain.Enums.UserAccount;
 using EducationalPaperworkWeb.Domain.Domain.Models.ChatEntities;
+using EducationalPaperworkWeb.Domain.Domain.Models.In_Program;
 using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
@@ -225,7 +226,7 @@ namespace EducationalPaperworkWeb.Views.Home
             if (file.StatusCode != OperationStatusCode.OK)
                 return Error(nameof(DownloadFile) + file.Description);
 
-            return File(file.Data.Content, file.Data.Mime, file.Data.Name);
+            return File(new MemoryStream(file.Data.Content), file.Data.Mime, file.Data.Name);
         }
 
         [HttpGet]
