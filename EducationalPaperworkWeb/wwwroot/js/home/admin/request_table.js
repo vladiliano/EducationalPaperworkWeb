@@ -4,8 +4,10 @@
         type: 'GET',
         success: function (data, textStatus, xhr) {
             if (data) {
+                hideClosedRequestMessage();
                 removeChatFocus();
                 displayData(data);
+                selectedChatId = -1;
             }
         }
     });

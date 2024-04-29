@@ -72,6 +72,10 @@ function setClosedRequestMessage() {
     $('#closed-chat-message').css('visibility', 'visible');
 }
 
+function hideClosedRequestMessage() {
+    $('#closed-chat-message').css('visibility', 'hidden');
+}
+
 function hideChatHeader() {
     $('#card-header').css('visibility', 'hidden');
 }
