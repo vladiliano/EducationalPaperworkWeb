@@ -32,14 +32,15 @@ function getChatData() {
 function handleChatDataResponse(data, textStatus, xhr) {
     if (xhr.status === 204) {
         hideMessageForm();
+        hideClosedRequestMessage();
         var newMessageHtml = getWaitFormHtml();
         $('.msg_card_body').html(newMessageHtml);
     } else {
         if (data.chatState === 1) {
             showMessageForm();
         }
-        else if (data.chatState === 2) {
-            setChatAsReadOnly();
+        if (data.chatState === 2) {
+            setChatAsReadOnly(data.chatId);
         }
 
         updateChat(data);
@@ -125,6 +126,8 @@ function updateStudentRequest(chat) {
     }
 }
 
-function setChatAsReadOnly() {
-    setClosedRequestMessage();
+function setChatAsReadOnly(chatId) {
+    if (selectedChatId === chatId.toString()) {
+        setClosedRequestMessage();
+    }
 }

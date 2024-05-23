@@ -17,14 +17,14 @@
 
             <label>Email</label>
             <div class="input-container">
-                <input asp-for="Email" type="text" value="kitik@gmail.com" />
+                <input asp-for="Email" type="text"/>
                 <span asp-validation-for="Email" class="text-danger validation-message"></span>
             </div>
 
             <label>Password</label>
             <div class="input-container">
                 <div class="password">
-                    <input asp-for="Password" type="Password" id="PasswordInput" name="password" value="12121212_qW" />
+                    <input asp-for="Password" type="Password" id="PasswordInput" name="password" />
                     <a href="#" class="password-control" onclick="return show_hide_password('PasswordInput', this);"></a>
                 </div>
                 <span asp-validation-for="Password" class="text-danger validation-message"></span>

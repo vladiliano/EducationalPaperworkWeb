@@ -7,6 +7,7 @@ using EducationalPaperworkWeb.Domain.Domain.Models.UserEntities;
 using EducationalPaperworkWeb.Domain.Domain.ViewModels;
 using EducationalPaperworkWeb.Features.Error;
 using EducationalPaperworkWeb.Infrastructure.Infrastructure.DataStorage.Interface;
+using EducationalPaperworkWeb.Service.Service.Helpers.Hashing;
 using EducationalPaperworkWeb.Service.Service.Implementations.ChatHub;
 using EducationalPaperworkWeb.Service.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -116,6 +117,7 @@ namespace EducationalPaperworkWeb.Views.Home
 
             var result = new
             {
+                chatId = chatId,
                 ChatState = chat.State,
                 Messages = messages.Data,
                 Companion = $"{recepient.Data.Name} {recepient.Data.Patronymic} {recepient.Data.Surname}"
@@ -283,8 +285,8 @@ namespace EducationalPaperworkWeb.Views.Home
             if(chat.StatusCode != OperationStatusCode.OK)
                 return Error(nameof(AcceptRequest) + chat.Description);
 
-            await _hubManager.SetChatAsReadOnly(chat.Data.AdminId);
-            await _hubManager.SetChatAsReadOnly(chat.Data.StudentId);
+            await _hubManager.SetChatAsReadOnly(chat.Data.AdminId, chatId);
+            await _hubManager.SetChatAsReadOnly(chat.Data.StudentId, chatId);
 
             return Ok();
         }

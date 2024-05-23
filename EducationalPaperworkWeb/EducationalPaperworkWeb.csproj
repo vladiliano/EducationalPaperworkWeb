@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\chat-scripts.js" />
+    <Content Remove="wwwroot\js\home\chat\chat_interaction.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\chat-scripts.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\home\chat\chat_interaction.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +39,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\icons\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\home\chat\chat_interaction.js" />
   </ItemGroup>
 
 </Project>

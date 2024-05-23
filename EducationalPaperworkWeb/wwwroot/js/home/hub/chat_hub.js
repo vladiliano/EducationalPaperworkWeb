@@ -26,9 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     hubConnection.on("UpdateStudentRequest", data => {
         updateStudentRequest(data);
-    }); 
+    });
 
-    hubConnection.on("SetChatAsReadOnly", () => {
-        setChatAsReadOnly();
+    hubConnection.on("SetChatAsReadOnly", data => {
+        setChatAsReadOnly(data);
     });
 });

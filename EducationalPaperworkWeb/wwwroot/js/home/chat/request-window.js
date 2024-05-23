@@ -1,6 +1,7 @@
 ﻿function setModal() {
     var html = getCreateRequestFormHtml();
     hideMessageForm();
+    hideClosedRequestMessage();
     $('.msg_card_body').html(html);
 }
 
